@@ -1,0 +1,12 @@
+{
+  "session_id": "504fef8b-84b4-4969-bc2e-97c605c0b7d5",
+  "transcript_path": "C:\\Users\\amoor\\.claude\\projects\\C--Users-amoor-eclipse-parsing-agent\\504fef8b-84b4-4969-bc2e-97c605c0b7d5.jsonl",
+  "cwd": "C:\\Users\\amoor\\eclipse-parsing-agent",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Read",
+  "tool_input": {
+    "file_path": "C:\\Users\\amoor\\eclipse-parsing-agent\\.claude\\.env"
+  },
+  "tool_use_id": "toolu_01J6U6RVTzsAzAXcvsMxHoZy"
+}

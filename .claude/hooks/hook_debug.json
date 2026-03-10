@@ -1,0 +1,15 @@
+{
+  "session_id": "ac787ffd-cb32-41f8-9199-c106df07eabb",
+  "transcript_path": "C:\\Users\\amoor\\.claude\\projects\\C--Users-amoor-eclipse-parsing-agent\\ac787ffd-cb32-41f8-9199-c106df07eabb.jsonl",
+  "cwd": "C:\\Users\\amoor\\eclipse-parsing-agent",
+  "permission_mode": "default",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Edit",
+  "tool_input": {
+    "file_path": "C:\\Users\\amoor\\eclipse-parsing-agent\\data\\hook_test.txt",
+    "old_string": "test",
+    "new_string": "test\nblocked test",
+    "replace_all": false
+  },
+  "tool_use_id": "toolu_01Mr4qMhLMEgyBnSXpohLe8q"
+}
