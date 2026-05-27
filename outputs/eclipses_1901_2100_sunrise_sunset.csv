@@ -1,0 +1,136 @@
+date,year,century,saros,type,ge_sun_alt,sunset_exists,sunset_min_sun_alt,sunset_max_totality_s,sunset_over_land,sunset_continent,sunset_countries,sunset_town,sunset_dist_km,sunset_land_sun_alt,sunset_land_lat,sunset_land_lon,sunrise_exists,sunrise_min_sun_alt,sunrise_max_totality_s,sunrise_over_land,sunrise_continent,sunrise_countries,sunrise_town,sunrise_dist_km,sunrise_land_sun_alt,sunrise_land_lat,sunrise_land_lon
+1901-05-18,1901,20th,136,T,68.7,True,3.3,202.4,True,Oceania,PG,Kwikila,34,6.4,-10.67,150.98,True,0.9,199.1,True,Africa,MG,Tsiombe,28,5.6,-25.34,45.75
+1903-09-21,1903,20th,123,T,25.8,False,,,False,,,,,,,,True,3.5,97.6,False,,,,,,,
+1904-09-09,1904,20th,133,T,80.6,True,3.2,196.5,False,,,,,,,,True,1.5,203.1,True,Oceania,MH,Aur,59,5.8,8.34,168.57
+1905-08-30,1905,20th,143,T,55.0,True,3.1,130.3,True,Asia,SA,As Sulayyil,3,9.3,20.43,45.58,True,2.5,117.2,True,North America,CA,Ear Falls,61,2.5,50.86,-92.44
+1907-01-14,1907,20th,120,T,30.1,True,3.4,79.6,True,Europe,RU,Ovsyanka,117,3.4,54.61,126.50,True,4.0,85.7,True,Asia/Europe,KZ RU,Nizhniy Baskunchak,28,4.0,48.28,47.20
+1908-01-03,1908,20th,130,T,78.9,True,3.4,108.5,False,,,,,,,,True,5.4,108.2,False,,,,,,,
+1910-05-09,1910,20th,117,T,18.8,True,2.0,219.8,True,Oceania,AU,Geeveston,111,7.4,-44.16,146.88,False,,,False,,,,,,,
+1911-04-28,1911,20th,127,T,76.8,True,4.7,159.0,False,,,,,,,,True,1.2,146.2,True,Oceania,AU,Bermagui,6,1.2,-36.45,150.01
+1912-10-10,1912,20th,142,T,65.3,True,3.8,29.5,False,,,,,,,,True,1.6,42.8,True,South America,EC,Esmeraldas,95,13.1,1.45,-80.35
+1914-08-21,1914,20th,124,T,39.8,True,4.3,86.7,True,Asia,IR PK,Turbat,13,4.3,24.89,66.20,True,2.4,70.0,False,,,,,,,
+1916-02-03,1916,20th,139,T,60.0,True,2.8,52.3,False,,,,,,,,True,2.7,68.0,False,,,,,,,
+1918-06-08,1918,20th,126,T,62.0,True,2.4,55.9,True,North America,BS US,Lake Panasoffkee,9,2.4,26.44,-76.87,True,2.8,60.5,False,,,,,,,
+1919-05-29,1919,20th,136,T,72.8,True,1.7,211.1,True,Africa,MZ TZ,Ulenje,10,1.7,-11.79,40.93,True,3.5,210.1,True,South America,BO PE,Chulumani,42,3.5,-18.36,-71.78
+1921-10-01,1921,20th,123,T,19.7,False,,,False,,,,,,,,True,2.5,89.8,False,,,,,,,
+1922-09-21,1922,20th,133,T,77.6,True,4.6,184.0,False,,,,,,,,True,4.9,191.1,True,Africa,SO,Hobyo,42,4.9,5.53,48.20
+1923-09-10,1923,20th,143,T,58.8,True,4.3,117.0,False,,,,,,,,True,3.0,103.1,False,,,,,,,
+1925-01-24,1925,20th,120,T,29.7,True,3.8,88.3,False,,,,,,,,True,4.0,96.1,True,North America,US,Leland,25,4.0,46.47,-89.49
+1926-01-14,1926,20th,130,T,78.7,True,4.3,107.0,False,,,,,,,,True,4.9,105.7,True,Africa,CD CF SS UG,Arua,12,4.9,5.05,25.65
+1927-06-29,1927,20th,145,T,34.9,True,2.7,14.4,False,,,,,,,,True,3.4,17.7,True,Europe,IE,Kinsale,119,6.7,50.64,-8.34
+1929-05-09,1929,20th,127,T,73.2,True,2.7,161.3,True,Oceania,FM,Ifalik,70,6.1,6.52,147.27,True,4.7,148.2,False,,,,,,,
+1930-10-21,1930,20th,142,T,67.5,True,4.0,31.2,False,,,,,,,,True,3.4,42.3,True,Oceania,FM,Kapingamarangi,109,9.9,2.05,154.96
+1932-08-31,1932,20th,124,T,33.5,True,1.9,70.1,False,,,,,,,,False,,,False,,,,,,,
+1934-02-14,1934,20th,139,T,60.8,True,5.0,67.9,False,,,,,,,,True,4.1,82.6,True,Asia,ID MY,Long Pujungan,38,4.1,3.03,111.74
+1936-06-19,1936,20th,126,T,57.1,True,4.9,70.2,False,,,,,,,,True,4.3,72.2,True,Europe,GR,Leonidio,10,6.6,37.12,22.95
+1937-06-08,1937,20th,136,T,77.0,True,5.4,217.2,True,South America,PE,Quillo,18,5.4,-10.22,-75.80,True,5.1,218.6,True,Oceania,TV,Savave Village,22,9.4,-8.06,178.12
+1938-05-29,1938,20th,146,T,15.5,True,1.5,203.3,False,,,,,,,,False,,,False,,,,,,,
+1939-10-12,1939,20th,123,T,12.4,False,,,False,,,,,,,,True,2.1,82.0,False,,,,,,,
+1940-10-01,1940,20th,133,T,75.0,True,4.6,172.2,False,,,,,,,,True,3.9,177.5,True,South America,CO VE,San Carlos de Rio Negro,42,3.9,2.42,-74.69
+1941-09-21,1941,20th,143,T,62.1,True,3.0,99.7,True,Oceania,MH,Mejit,25,6.1,10.17,170.67,True,4.6,87.5,True,Asia/Europe,KZ RU,Beyneu,65,4.6,45.75,48.81
+1943-02-04,1943,20th,120,T,28.8,True,1.7,93.2,False,,,,,,,,True,3.8,107.0,True,Europe,RU,Terney,19,3.8,45.58,134.74
+1944-01-25,1944,20th,130,T,78.4,True,1.2,105.1,True,Africa,BF ML NE,Ansongo,43,1.2,18.40,8.24,True,3.1,106.5,False,,,,,,,
+1945-07-09,1945,20th,145,T,42.3,True,3.4,27.9,True,Asia,KZ,Khantaghy,4,3.4,43.56,68.56,True,3.1,29.7,True,North America,US,Boulder,12,3.1,46.13,-112.15
+1947-05-20,1947,20th,127,T,69.3,True,4.2,164.6,True,Africa,CD TZ UG,Kamwenge,34,4.2,-0.83,33.11,True,2.5,151.9,True,South America,AR CL,Melipilla,27,6.0,-33.90,-71.37
+1948-11-01,1948,20th,142,T,69.2,True,3.0,29.9,False,,,,,,,,True,3.7,39.9,True,Africa,CD UG,Wakiso,9,3.7,2.73,25.53
+1950-09-12,1950,20th,124,T,26.7,True,3.4,50.5,False,,,,,,,,False,,,False,,,,,,,
+1952-02-25,1952,20th,139,T,61.9,True,2.2,79.4,True,Europe,RU,Abaza,14,5.7,52.60,90.28,True,3.1,96.4,False,,,,,,,
+1954-06-30,1954,20th,126,T,51.9,True,2.3,79.4,True,Asia,AF IN PK,Mastung,10,2.3,27.40,71.59,True,3.3,79.7,True,North America,US,Hurley,7,3.3,44.20,-95.20
+1955-06-20,1955,20th,136,T,81.3,True,5.4,220.6,False,,,,,,,,True,2.1,223.5,False,,,,,,,
+1956-06-08,1956,20th,146,T,26.3,True,2.9,205.7,False,,,,,,,,True,3.8,201.1,False,,,,,,,
+1958-10-12,1958,20th,133,T,72.7,True,2.9,161.1,True,South America,CL,Machali,56,2.9,-34.08,-70.06,True,4.4,164.1,False,,,,,,,
+1959-10-02,1959,20th,143,T,65.0,True,3.7,81.2,True,Africa,SO,Gaalkacyo,82,6.4,7.08,49.96,True,2.0,69.6,True,North America,US,Truro,69,2.0,42.42,-69.44
+1961-02-15,1961,20th,120,T,27.6,False,,,False,,,,,,,,True,3.5,117.5,True,Europe,FR,Lavilledieu,2,3.5,45.53,-0.75
+1962-02-05,1962,20th,130,T,77.9,True,4.8,107.8,False,,,,,,,,True,3.3,107.3,True,Asia,ID,Dofa,30,3.3,-0.30,119.07
+1963-07-20,1963,20th,145,T,48.6,True,4.0,40.3,False,,,,,,,,True,3.9,41.0,True,Asia,JP,Kuril'sk,69,3.9,45.03,147.05
+1965-05-30,1965,20th,127,T,65.0,True,3.2,164.3,False,,,,,,,,True,1.5,151.9,True,Oceania,NZ,Ahipara,78,1.5,-35.63,172.52
+1966-11-12,1966,20th,142,T,70.5,True,5.0,31.1,False,,,,,,,,True,3.0,39.5,False,,,,,,,
+1968-09-22,1968,20th,124,T,18.6,True,3.1,28.0,True,Asia,CN KZ,Akdala,24,3.1,42.48,86.05,False,,,False,,,,,,,
+1970-03-07,1970,20th,139,T,63.3,True,5.3,96.9,False,,,,,,,,True,3.8,111.4,False,,,,,,,
+1972-07-10,1972,20th,126,T,46.3,True,1.7,89.8,False,,,,,,,,True,2.0,84.8,False,,,,,,,
+1973-06-30,1973,20th,136,T,85.6,True,3.8,220.1,False,,,,,,,,True,4.9,223.6,True,South America,SR,Paramaribo,61,4.9,6.36,-55.39
+1974-06-20,1974,20th,146,T,34.3,True,2.5,199.8,False,,,,,,,,True,1.9,206.0,False,,,,,,,
+1976-10-23,1976,20th,133,T,70.7,True,5.0,146.3,False,,,,,,,,True,1.0,151.0,True,Africa,TZ,Kibaya,15,1.0,-4.29,32.36
+1977-10-12,1977,20th,143,T,67.3,True,3.7,60.7,True,South America,CO,Manta,3,6.5,5.20,-71.73,True,3.3,49.8,False,,,,,,,
+1979-02-26,1979,20th,120,T,25.7,False,,,False,,,,,,,,True,3.6,126.3,False,,,,,,,
+1980-02-16,1980,20th,130,T,77.1,True,2.6,108.4,True,Asia,CN MM,Tuguan,9,2.6,25.95,105.84,True,3.0,108.9,False,,,,,,,
+1981-07-31,1981,20th,145,T,54.3,True,2.8,50.5,False,,,,,,,,True,3.9,50.1,True,Asia/Europe,KZ RU,Kizlyar,2,3.9,43.70,44.62
+1983-06-11,1983,20th,127,T,60.3,True,1.1,161.5,True,Oceania,VU,Port-Vila,107,1.1,-17.64,167.32,True,4.2,148.7,False,,,,,,,
+1984-11-22,1984,20th,142,T,71.6,True,2.9,32.4,False,,,,,,,,True,3.4,39.9,True,Asia,ID,Topo,21,3.4,-1.79,131.28
+1985-11-12,1985,20th,152,T,10.8,False,,,False,,,,,,,,True,1.1,111.1,False,,,,,,,
+1988-03-18,1988,20th,139,T,65.1,True,3.2,108.6,False,,,,,,,,True,1.5,124.7,False,,,,,,,
+1990-07-22,1990,20th,126,T,40.3,True,2.5,96.9,False,,,,,,,,True,2.2,87.6,True,Europe,FI,Ristiina,13,2.2,61.41,27.12
+1991-07-11,1991,20th,136,Tm,89.9,True,4.4,219.6,False,,,,,,,,True,4.1,221.9,False,,,,,,,
+1992-06-30,1992,20th,146,T,41.1,True,4.1,193.3,False,,,,,,,,True,3.6,198.8,True,South America,BR,Chui,77,3.6,-34.15,-52.83
+1994-11-03,1994,20th,133,T,69.2,True,4.9,133.1,False,,,,,,,,True,4.3,136.3,False,,,,,,,
+1995-10-24,1995,20th,143,T,69.3,True,5.2,38.2,False,,,,,,,,True,4.5,29.1,True,Asia,AF IR,Khusf,29,4.5,33.72,56.17
+1997-03-09,1997,20th,120,T,22.9,False,,,False,,,,,,,,True,0.9,135.9,True,Asia/Europe,MN RU,Naranbulag,24,0.9,49.36,88.46
+1998-02-26,1998,20th,130,T,76.1,True,3.9,111.8,False,,,,,,,,True,5.3,112.8,False,,,,,,,
+1999-08-11,1999,20th,145,T,59.3,True,1.2,59.6,True,Asia,IN,Murtajapur,6,5.2,19.09,82.11,True,1.9,59.1,False,,,,,,,
+2001-06-21,2001,21st,127,T,55.2,True,4.8,153.2,True,Africa,MG,Ihosy,35,7.0,-23.75,48.57,True,4.2,144.6,False,,,,,,,
+2002-12-04,2002,21st,142,T,72.2,True,4.2,34.9,True,Oceania,AU,Ceduna,21,4.2,-30.33,138.06,True,4.6,40.6,False,,,,,,,
+2003-11-23,2003,21st,152,T,14.9,False,,,False,,,,,,,,True,1.9,102.7,False,,,,,,,
+2006-03-29,2006,21st,139,T,67.3,True,0.7,125.4,True,Europe,RU,Choya,17,0.7,51.64,97.58,True,5.3,138.6,False,,,,,,,
+2008-08-01,2008,21st,126,T,33.5,True,1.2,103.4,True,Asia,CN,Tongchuan,6,1.2,33.99,112.44,False,,,False,,,,,,,
+2009-07-22,2009,21st,136,T,85.9,True,5.0,217.6,False,,,,,,,,True,1.6,217.7,True,Asia,IN,Jaithari,13,1.6,20.97,72.16
+2010-07-11,2010,21st,146,T,47.1,True,2.5,178.6,False,,,,,,,,True,1.6,191.5,False,,,,,,,
+2012-11-13,2012,21st,133,T,68.0,True,1.6,121.6,False,,,,,,,,True,4.1,123.6,True,Oceania,AU,Port Douglas,67,4.1,-13.30,136.99
+2015-03-20,2015,21st,120,T,18.5,False,,,False,,,,,,,,True,1.7,141.0,False,,,,,,,
+2016-03-09,2016,21st,130,T,74.8,True,3.3,114.6,False,,,,,,,,True,2.9,116.5,True,Asia,ID,Ipuh,27,13.9,-2.79,101.37
+2017-08-21,2017,21st,145,T,63.9,True,3.7,66.6,False,,,,,,,,True,3.7,66.0,False,,,,,,,
+2019-07-02,2019,21st,127,T,49.6,True,3.6,144.4,True,South America,AR,Carnerillo,9,3.6,-34.10,-61.44,True,0.7,138.7,False,,,,,,,
+2020-12-14,2020,21st,142,T,72.7,True,3.9,37.7,False,,,,,,,,True,5.4,44.0,False,,,,,,,
+2021-12-04,2021,21st,152,T,17.2,False,,,False,,,,,,,,True,2.8,96.5,False,,,,,,,
+2024-04-08,2024,21st,139,T,69.8,True,2.8,140.1,False,,,,,,,,True,4.5,151.6,False,,,,,,,
+2026-08-12,2026,21st,126,T,25.8,True,3.1,107.6,True,Europe,ES,Quintanilla del Coco,2,3.1,39.81,1.76,False,,,False,,,,,,,
+2027-08-02,2027,21st,136,T,81.7,True,5.6,214.4,False,,,,,,,,True,4.0,211.5,False,,,,,,,
+2028-07-22,2028,21st,146,T,52.6,True,4.1,166.3,False,,,,,,,,True,3.4,177.6,False,,,,,,,
+2030-11-25,2030,21st,133,T,67.0,True,3.6,111.4,False,,,,,,,,True,1.7,111.3,False,,,,,,,
+2033-03-30,2033,21st,120,T,11.2,False,,,False,,,,,,,,True,0.4,144.9,False,,,,,,,
+2034-03-20,2034,21st,130,T,73.1,True,5.0,115.9,True,Asia,CN,Zangkaxa,82,9.2,34.49,81.70,True,1.4,118.3,False,,,,,,,
+2035-09-02,2035,21st,145,T,67.9,True,2.3,70.9,False,,,,,,,,True,4.7,71.2,True,Asia,CN,Tieganlike,22,4.7,38.83,85.46
+2037-07-13,2037,21st,127,T,43.4,True,1.9,128.1,False,,,,,,,,True,4.4,130.0,False,,,,,,,
+2038-12-26,2038,21st,142,T,73.0,True,3.8,44.4,False,,,,,,,,True,5.1,48.6,False,,,,,,,
+2039-12-15,2039,21st,152,T,18.4,False,,,False,,,,,,,,True,2.9,89.3,False,,,,,,,
+2041-04-30,2041,21st,129,T,63.2,True,2.2,27.8,False,,,,,,,,True,3.1,26.0,False,,,,,,,
+2042-04-20,2042,21st,139,T,72.7,True,3.1,153.6,False,,,,,,,,True,4.4,164.7,False,,,,,,,
+2044-08-23,2044,21st,126,T,15.4,True,2.5,110.5,True,North America,CA US,Strathmore,11,2.5,47.98,-106.35,False,,,False,,,,,,,
+2045-08-12,2045,21st,136,T,77.6,True,1.1,209.6,True,South America,BR,Itamaraca,118,12.6,-7.81,-33.76,True,2.6,205.2,False,,,,,,,
+2046-08-02,2046,21st,146,T,57.6,True,4.0,150.1,False,,,,,,,,True,2.1,162.6,True,South America,BR,Marechal Deodoro,36,2.1,-10.00,-35.74
+2048-12-05,2048,21st,133,T,66.4,True,3.6,101.9,True,Africa,NA,Maltahohe,79,3.6,-24.12,16.96,True,4.4,100.8,False,,,,,,,
+2052-03-30,2052,21st,130,T,71.0,True,1.8,119.0,False,,,,,,,,True,5.1,119.8,True,Oceania,KI,Banana Village,42,5.1,1.95,-156.99
+2053-09-12,2053,21st,145,T,71.6,True,5.2,73.2,False,,,,,,,,True,1.4,74.4,False,,,,,,,
+2055-07-24,2055,21st,127,T,36.5,True,3.1,110.9,False,,,,,,,,True,2.8,113.7,False,,,,,,,
+2057-01-05,2057,21st,142,T,73.3,True,4.8,51.2,False,,,,,,,,True,2.9,53.8,False,,,,,,,
+2057-12-26,2057,21st,152,T,19.4,True,2.3,83.8,False,,,,,,,,True,1.8,85.5,False,,,,,,,
+2059-05-11,2059,21st,129,T,59.4,True,3.0,52.1,True,South America,BR,Jacareacanga,44,3.0,-8.37,-50.11,True,4.8,47.3,False,,,,,,,
+2060-04-30,2060,21st,139,T,75.8,True,2.1,169.4,True,Asia,CN,Sanjiaocheng,33,2.1,37.17,101.15,True,3.5,176.7,False,,,,,,,
+2061-04-20,2061,21st,149,T,16.2,False,,,False,,,,,,,,True,2.4,141.8,True,Asia/Europe,KZ RU,Nizhniy Baskunchak,26,2.4,47.36,43.99
+2063-08-24,2063,21st,136,T,73.8,True,4.7,205.7,True,Oceania,PF,Taiohae,72,4.7,-9.17,-140.69,True,4.7,196.9,True,Asia,CN,Yiwu,15,4.7,42.81,91.23
+2064-08-12,2064,21st,146,T,62.2,True,3.4,131.8,False,,,,,,,,True,3.6,144.5,False,,,,,,,
+2066-12-17,2066,21st,133,T,65.9,True,3.9,94.1,False,,,,,,,,True,4.8,91.0,False,,,,,,,
+2068-05-31,2068,21st,148,T,36.9,True,3.7,10.6,False,,,,,,,,True,0.5,13.3,False,,,,,,,
+2070-04-11,2070,21st,130,T,68.4,True,5.0,119.4,False,,,,,,,,True,3.9,121.9,True,Asia,LK,Wattegama,76,3.9,5.72,79.20
+2071-09-23,2071,21st,145,T,74.7,True,3.1,75.4,False,,,,,,,,True,2.5,76.0,False,,,,,,,
+2072-09-12,2072,21st,155,T,14.4,True,1.5,173.2,True,Europe,RU,Nizhniy Kuranakh,25,4.2,58.72,126.66,False,,,False,,,,,,,
+2073-08-03,2073,21st,127,T,28.5,True,3.2,89.0,False,,,,,,,,True,2.9,94.7,False,,,,,,,
+2075-01-16,2075,21st,142,T,73.5,True,0.9,60.0,True,South America,BR,Ilheus,85,12.3,-14.82,-38.25,True,4.4,62.7,False,,,,,,,
+2076-01-06,2076,21st,152,T,19.9,True,1.5,84.2,False,,,,,,,,True,1.9,81.6,False,,,,,,,
+2077-05-22,2077,21st,129,T,55.0,True,3.0,73.6,True,Oceania,AS,Ofu,107,9.2,-13.60,-168.67,True,3.9,68.4,False,,,,,,,
+2078-05-11,2078,21st,139,T,79.3,True,3.5,182.4,False,,,,,,,,True,5.3,187.4,False,,,,,,,
+2079-05-01,2079,21st,149,T,24.4,False,,,False,,,,,,,,True,3.1,143.8,True,North America,CA US,Newport,6,3.1,41.44,-71.32
+2081-09-03,2081,21st,136,T,70.1,True,3.6,198.2,False,,,,,,,,True,0.7,186.8,False,,,,,,,
+2082-08-24,2082,21st,146,T,66.3,True,1.5,116.1,False,,,,,,,,True,2.1,123.9,True,Asia,ID MY,Lawepakam,12,2.1,3.20,97.96
+2084-12-27,2084,21st,133,T,65.6,True,4.1,88.3,False,,,,,,,,True,2.7,83.8,False,,,,,,,
+2086-06-11,2086,21st,148,T,43.7,True,4.1,31.5,False,,,,,,,,True,4.3,36.4,False,,,,,,,
+2088-04-21,2088,21st,130,T,65.4,True,3.0,118.1,True,Asia,CN,Dangchengwan,82,3.0,38.81,94.68,True,3.0,121.4,False,,,,,,,
+2089-10-04,2089,21st,145,T,77.4,True,5.4,74.6,False,,,,,,,,True,2.6,75.6,True,Asia,CN,Houpingba,2,2.6,29.65,100.49
+2090-09-23,2090,21st,155,T,23.2,True,3.3,176.6,True,Europe,FR GB,Tessy-sur-Vire,3,3.3,48.96,-1.09,False,,,False,,,,,,,
+2091-08-15,2091,21st,127,T,17.8,True,0.3,64.1,False,,,,,,,,True,2.7,72.5,False,,,,,,,
+2093-01-27,2093,21st,142,T,73.9,True,3.4,70.8,True,Oceania,AS,Taulaga,51,12.8,-10.61,-171.16,True,2.4,71.8,False,,,,,,,
+2094-01-16,2094,21st,152,T,20.5,True,2.8,85.8,False,,,,,,,,True,1.8,81.8,False,,,,,,,
+2095-06-02,2095,21st,129,T,50.1,True,4.4,94.0,False,,,,,,,,True,4.4,89.7,False,,,,,,,
+2096-05-22,2096,21st,139,T,83.0,True,5.3,195.6,False,,,,,,,,True,0.9,199.1,True,Asia,ID,Pringsewu,2,9.8,-5.98,103.72
+2097-05-11,2097,21st,149,T,31.3,False,,,False,,,,,,,,True,2.7,145.6,False,,,,,,,
+2099-09-14,2099,21st,136,T,66.7,True,4.7,194.0,False,,,,,,,,True,4.7,177.6,False,,,,,,,
+2100-09-04,2100,21st,146,T,70.2,True,5.3,96.0,False,,,,,,,,True,0.7,102.5,True,Africa,CI GN SL,Rokupr,13,5.4,8.79,-12.42

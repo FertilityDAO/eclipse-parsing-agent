@@ -1,0 +1,19 @@
+place,region,lat,lon,status,is_total,magnitude,sun_alt,totality_secs,ut_max_utc,sunset_utc,min_to_sunset,min_after_sunrise,sunset_eclipse,sunrise_eclipse
+A Coruna,NW coast,43.37,-8.40,TOTAL,True,1.0343,11.9,75.2,18:28:14,19:40:49,72.6,,False,False
+Gijon,N coast,43.54,-5.66,TOTAL,True,1.0337,10.1,105.0,18:27:35,19:30:14,62.6,,False,False
+Santander,N coast,43.46,-3.81,TOTAL,True,1.0333,8.8,63.9,18:27:24,19:22:40,55.3,,True,False
+Bilbao,N coast,43.26,-2.93,TOTAL,True,1.0331,8.1,31.8,18:27:33,19:18:43,51.2,,True,False
+Pamplona,N inland,42.81,-1.65,partial (mag 0.999),False,0.9989,7.0,0.0,18:28:00,19:12:39,44.6,,True,False
+Zaragoza,NE inland,41.65,-0.89,TOTAL,True,1.0324,5.9,84.5,18:29:40,19:07:14,37.6,,True,False
+Lleida,NE inland,41.62,0.62,TOTAL,True,1.0321,4.8,29.3,18:29:18,19:01:08,31.8,,True,False
+Tarragona,E coast,41.12,1.25,TOTAL,True,1.0318,4.1,60.5,18:29:54,18:57:38,27.7,,True,False
+Barcelona,E coast,41.39,2.17,partial (mag 0.997),False,0.9966,3.7,0.0,18:29:12,18:54:29,25.3,,True,False
+Castellon,E coast,39.99,-0.04,TOTAL,True,1.0319,4.4,93.6,18:32:01,19:00:35,28.6,,True,False
+Valencia,E coast,39.47,-0.38,TOTAL,True,1.0319,4.3,58.5,18:32:55,19:00:58,28.0,,True,False
+Alicante,E coast (S),38.35,-0.48,partial (mag 0.989),False,0.9891,3.8,0.0,18:34:39,18:59:18,24.6,,True,False
+Palma Mallorca,Balearics,39.57,2.65,TOTAL,True,1.0313,2.3,96.2,18:31:49,18:49:03,17.2,,True,False
+Mahon Menorca,Balearics,39.89,4.27,TOTAL,True,1.0310,1.4,70.3,18:30:46,18:43:10,12.4,,True,False
+Ibiza,Balearics,38.91,1.43,TOTAL,True,1.0314,2.8,63.4,18:33:12,18:52:41,19.5,,True,False
+Formentera,Balearics,38.70,1.43,TOTAL,True,1.0314,2.7,38.2,18:33:31,18:52:18,18.8,,True,False
+Madrid,central (ref),40.42,-3.70,partial (mag 0.999),False,0.9987,7.2,0.0,18:32:18,19:16:02,43.7,,True,False
+Zurich,C Europe (ref),47.37,8.55,partial (mag 0.919),False,0.9194,3.0,0.0,18:17:57,18:42:19,24.4,,True,False
