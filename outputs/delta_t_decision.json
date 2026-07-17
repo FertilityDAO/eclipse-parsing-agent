@@ -1,0 +1,118 @@
+{
+  "stage": "B2",
+  "frozen": true,
+  "frozen_on": "2026-07-17",
+  "change_policy": "FROZEN. Changing the Delta-T model invalidates every downstream stage (B3-B8) and all fixtures; it requires explicit human sign-off and a full gate re-run.",
+  "model": "Catalog-embedded Delta-T: the per-eclipse `dt` column of NASA's Five Millennium Canon, i.e. the Espenak & Meeus polynomial expressions for Delta-T (Morrison & Stephenson 2004 basis) with the canon's secular-acceleration correction c = -0.000012932*(y-1955)^2 s (n-dot = -25.858 arcsec/cy^2).",
+  "decision": "The solver MUST take Delta-T for each eclipse verbatim from the catalog's `dt` column and must NOT recompute it from any polynomial at runtime. The Besselian elements in this catalog were generated against exactly these `dt` values; using any other Delta-T would silently shear the elements against their own time base (15 deg/hour: a 1-hour error slides the path ~1,670 km at the equator).",
+  "rationale": "LOOP_B.md rule: 'If the elements came from NASA, they already embed NASA's Delta-T choice. Match it.' Consistency with the audited catalog (B1) beats theoretical purity. The embedded model was IDENTIFIED, not assumed: recomputing Delta-T from the published Espenak-Meeus expressions (+ canon correction) for all 11898 eclipses (-1999..+3000) reproduces the catalog `dt` column with max |residual| = 1.1 s (catalog rounds to 0.1 s). The `dt` column is present on 11898/11898 rows.",
+  "source": [
+    "Espenak, F. & Meeus, J., 'Five Millennium Canon of Solar Eclipses: -1999 to +3000', NASA/TP-2006-214141 (Delta-T discussion, Sect. 4).",
+    "Espenak & Meeus, 'Polynomial Expressions for Delta T', https://eclipse.gsfc.nasa.gov/SEcat5/deltatpoly.html",
+    "Morrison, L. & Stephenson, F.R. (2004), 'Historical values of the Earth's clock error Delta T and the calculation of eclipses', J. Hist. Astron. 35, 327-336.",
+    "NASA, 'Uncertainty in Delta T', https://eclipse.gsfc.nasa.gov/SEhelp/uncertainty2004.html (sigma = 0.8*t^2 s, t in centuries from 1820)."
+  ],
+  "model_identification": {
+    "method": "Recompute Delta-T from the Espenak-Meeus piecewise polynomials + canon secular-acceleration correction at fractional year (year + (month-0.5)/12); compare with the catalog `dt` for every eclipse.",
+    "eclipses_checked": 11898,
+    "max_abs_residual_s": 1.1,
+    "confirmed": true,
+    "samples": [
+      {
+        "year": -1999,
+        "catalog_dt_s": 46438.2,
+        "recomputed_dt_s": 46437.9,
+        "residual_s": 0.3
+      },
+      {
+        "year": -1000,
+        "catalog_dt_s": 25309.8,
+        "recomputed_dt_s": 25309.5,
+        "residual_s": 0.3
+      },
+      {
+        "year": 0,
+        "catalog_dt_s": 10529.4,
+        "recomputed_dt_s": 10529.5,
+        "residual_s": -0.1
+      },
+      {
+        "year": 500,
+        "catalog_dt_s": 5681.4,
+        "recomputed_dt_s": 5681.4,
+        "residual_s": 0.0
+      },
+      {
+        "year": 1000,
+        "catalog_dt_s": 1560.9,
+        "recomputed_dt_s": 1560.8,
+        "residual_s": 0.1
+      },
+      {
+        "year": 1500,
+        "catalog_dt_s": 195.2,
+        "recomputed_dt_s": 195.3,
+        "residual_s": -0.1
+      },
+      {
+        "year": 1800,
+        "catalog_dt_s": 13.3,
+        "recomputed_dt_s": 13.3,
+        "residual_s": 0.0
+      },
+      {
+        "year": 1900,
+        "catalog_dt_s": -2.2,
+        "recomputed_dt_s": -2.3,
+        "residual_s": 0.1
+      },
+      {
+        "year": 1955,
+        "catalog_dt_s": 31.2,
+        "recomputed_dt_s": 31.2,
+        "residual_s": 0.0
+      },
+      {
+        "year": 1999,
+        "catalog_dt_s": 63.5,
+        "recomputed_dt_s": 63.5,
+        "residual_s": 0.0
+      },
+      {
+        "year": 2017,
+        "catalog_dt_s": 70.0,
+        "recomputed_dt_s": 70.0,
+        "residual_s": 0.0
+      },
+      {
+        "year": 2026,
+        "catalog_dt_s": 75.1,
+        "recomputed_dt_s": 75.1,
+        "residual_s": 0.0
+      },
+      {
+        "year": 2500,
+        "catalog_dt_s": 1456.6,
+        "recomputed_dt_s": 1456.7,
+        "residual_s": -0.1
+      },
+      {
+        "year": 3000,
+        "catalog_dt_s": 4424.0,
+        "recomputed_dt_s": 4423.8,
+        "residual_s": 0.2
+      }
+    ]
+  },
+  "uncertainty_km_by_era": {
+    "-2000 (extrapolated, pre-telescopic)": 543,
+    "-1000 (extrapolated, pre-telescopic)": 296,
+    "0001 (extrapolated, pre-telescopic)": 123,
+    "1000 (extrapolated, pre-telescopic)": 25,
+    "1600-1900 (telescopic record)": 9,
+    "1900-2015 (instrumental record)": 1,
+    "2050 (near-future extrapolation)": 2,
+    "3000 (far-future extrapolation)": 52
+  },
+  "uncertainty_notes": "Values are the ~1-sigma east-west path shift at the equator implied by the Delta-T standard error for that era (path-shift km ~= 0.465 * sigma_seconds * cos(latitude)). Pre-telescopic and far-future sigmas come from the NASA-published extrapolation sigma = 0.8*t^2 s; telescopic/instrumental-era sigmas are bounded by the observational record (Morrison & Stephenson 2004). Ancient-era uncertainty is genuinely large \u2014 hundreds of km at 2000 BCE \u2014 and every ancient-era path result downstream must surface this band, not hide it."
+}
