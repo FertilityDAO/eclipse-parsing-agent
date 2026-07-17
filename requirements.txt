@@ -1,0 +1,7 @@
+# Runtime dependencies for the Besselian solver loop (LOOP B).
+#
+# The B3 core solver (src/besselian.py) uses only the Python standard library.
+# The B4 independent cross-checker (src/crosscheck_skyfield.py) uses Skyfield to
+# read JPL DE ephemerides. On first use it fetches ephemeris/de440s.bsp (~32 MB,
+# git-ignored); thereafter it runs offline.
+skyfield>=1.49

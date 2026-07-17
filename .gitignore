@@ -15,3 +15,7 @@ Thumbs.db
 # Claude hook debug logs
 .claude/hooks/*_debug.json
 .claude/hooks/*_result.json
+
+# JPL ephemerides (large binaries; auto-fetched by Skyfield on first use)
+ephemeris/
+*.bsp
