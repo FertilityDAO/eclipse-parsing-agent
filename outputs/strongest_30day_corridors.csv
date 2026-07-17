@@ -1,0 +1,6 @@
+rank,start_day_of_year,end_day_of_year,start_date,end_date,window_days,total_eclipses_in_window,share_of_all_totals
+1,148,177,May 27,Jun 25,30,316,0.0996
+2,182,211,Jun 30,Jul 29,30,312,0.0983
+3,111,140,Apr 20,May 19,30,307,0.0968
+4,213,242,Jul 31,Aug 29,30,296,0.0933
+5,78,107,Mar 18,Apr 16,30,293,0.0923

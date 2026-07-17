@@ -1,0 +1,311 @@
+{
+  "stage": "B1",
+  "purpose": "Column audit \u2014 which canonical Besselian element fields are present in data/?",
+  "canonical_requirements": {
+    "t0 (reference time)": [
+      "t0"
+    ],
+    "x (shadow axis, poly)": [
+      "x0",
+      "x1",
+      "x2",
+      "x3"
+    ],
+    "y (shadow axis, poly)": [
+      "y0",
+      "y1",
+      "y2",
+      "y3"
+    ],
+    "d (declination, poly)": [
+      "d0",
+      "d1",
+      "d2"
+    ],
+    "mu (hour angle, poly)": [
+      "mu0",
+      "mu1",
+      "mu2"
+    ],
+    "l1 (penumbra radius, poly)": [
+      "l10",
+      "l11",
+      "l12",
+      "l1"
+    ],
+    "l2 (umbra radius, poly)": [
+      "l20",
+      "l21",
+      "l22",
+      "l2"
+    ],
+    "tan_f1 (penumbra cone angle)": [
+      "tan_f1",
+      "tanf1"
+    ],
+    "tan_f2 (umbra cone angle)": [
+      "tan_f2",
+      "tanf2"
+    ]
+  },
+  "files_inspected": [
+    "data/nasa_5millennium_solar_eclipses.csv",
+    "data/raw_eclipses.csv"
+  ],
+  "file_count": 2,
+  "files": [
+    {
+      "file": "data/nasa_5millennium_solar_eclipses.csv",
+      "size_bytes": 5952576,
+      "format": "csv",
+      "column_count": 54,
+      "columns_present": [
+        "year",
+        "month",
+        "day",
+        "td_ge",
+        "dt",
+        "luna_num",
+        "saros",
+        "eclipse_type",
+        "gamma",
+        "magnitude",
+        "lat_ge",
+        "lng_ge",
+        "lat_dd_ge",
+        "lng_dd_ge",
+        "sun_alt",
+        "sun_azm",
+        "path_width",
+        "central_duration",
+        "duration_secs",
+        "cat_no",
+        "canon_plate",
+        "julian_date",
+        "t0",
+        "x0",
+        "x1",
+        "x2",
+        "x3",
+        "y0",
+        "y1",
+        "y2",
+        "y3",
+        "d0",
+        "d1",
+        "d2",
+        "mu0",
+        "mu1",
+        "mu2",
+        "l10",
+        "l11",
+        "l12",
+        "l20",
+        "l21",
+        "l22",
+        "tan_f1",
+        "tan_f2",
+        "tmin",
+        "tmax",
+        "etype",
+        "PNS",
+        "UNS",
+        "NCN",
+        "nSer",
+        "nSeq",
+        "nJLE"
+      ],
+      "besselian_requirements": {
+        "t0 (reference time)": {
+          "satisfied": true,
+          "matched_columns": [
+            "t0"
+          ]
+        },
+        "x (shadow axis, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "x0",
+            "x1",
+            "x2",
+            "x3"
+          ]
+        },
+        "y (shadow axis, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "y0",
+            "y1",
+            "y2",
+            "y3"
+          ]
+        },
+        "d (declination, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "d0",
+            "d1",
+            "d2"
+          ]
+        },
+        "mu (hour angle, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "mu0",
+            "mu1",
+            "mu2"
+          ]
+        },
+        "l1 (penumbra radius, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "l10",
+            "l11",
+            "l12"
+          ]
+        },
+        "l2 (umbra radius, poly)": {
+          "satisfied": true,
+          "matched_columns": [
+            "l20",
+            "l21",
+            "l22"
+          ]
+        },
+        "tan_f1 (penumbra cone angle)": {
+          "satisfied": true,
+          "matched_columns": [
+            "tan_f1"
+          ]
+        },
+        "tan_f2 (umbra cone angle)": {
+          "satisfied": true,
+          "matched_columns": [
+            "tan_f2"
+          ]
+        }
+      },
+      "elements_available": true
+    },
+    {
+      "file": "data/raw_eclipses.csv",
+      "size_bytes": 222,
+      "format": "csv",
+      "column_count": 6,
+      "columns_present": [
+        "date",
+        "type",
+        "duration",
+        "latitude",
+        "longitude",
+        "saros_cycle"
+      ],
+      "besselian_requirements": {
+        "t0 (reference time)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "x (shadow axis, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "y (shadow axis, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "d (declination, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "mu (hour angle, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "l1 (penumbra radius, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "l2 (umbra radius, poly)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "tan_f1 (penumbra cone angle)": {
+          "satisfied": false,
+          "matched_columns": []
+        },
+        "tan_f2 (umbra cone angle)": {
+          "satisfied": false,
+          "matched_columns": []
+        }
+      },
+      "elements_available": false
+    }
+  ],
+  "columns_present": [
+    "NCN",
+    "PNS",
+    "UNS",
+    "canon_plate",
+    "cat_no",
+    "central_duration",
+    "d0",
+    "d1",
+    "d2",
+    "date",
+    "day",
+    "dt",
+    "duration",
+    "duration_secs",
+    "eclipse_type",
+    "etype",
+    "gamma",
+    "julian_date",
+    "l10",
+    "l11",
+    "l12",
+    "l20",
+    "l21",
+    "l22",
+    "lat_dd_ge",
+    "lat_ge",
+    "latitude",
+    "lng_dd_ge",
+    "lng_ge",
+    "longitude",
+    "luna_num",
+    "magnitude",
+    "month",
+    "mu0",
+    "mu1",
+    "mu2",
+    "nJLE",
+    "nSeq",
+    "nSer",
+    "path_width",
+    "saros",
+    "saros_cycle",
+    "sun_alt",
+    "sun_azm",
+    "t0",
+    "tan_f1",
+    "tan_f2",
+    "td_ge",
+    "tmax",
+    "tmin",
+    "type",
+    "x0",
+    "x1",
+    "x2",
+    "x3",
+    "y0",
+    "y1",
+    "y2",
+    "y3",
+    "year"
+  ],
+  "sources_with_elements": [
+    "data/nasa_5millennium_solar_eclipses.csv"
+  ],
+  "elements_available": true,
+  "rationale": "At least one data file exposes the full set of canonical Besselian elements as NASA polynomial coefficients: data/nasa_5millennium_solar_eclipses.csv. Each required concept (t0, x0..x3, y0..y3, d0..d2, mu0..mu2, l1/l2 radius coefficients, tan_f1, tan_f2) is present, so the B3 solver can be built as specified without sourcing elements externally."
+}

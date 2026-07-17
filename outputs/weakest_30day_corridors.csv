@@ -1,0 +1,6 @@
+rank,start_day_of_year,end_day_of_year,start_date,end_date,window_days,total_eclipses_in_window,share_of_all_totals
+1,309,338,Nov 04,Dec 03,30,202,0.0637
+2,342,5,Dec 07,Jan 05,30,209,0.0659
+3,9,38,Jan 09,Feb 07,30,214,0.0674
+4,277,306,Oct 03,Nov 01,30,216,0.0681
+5,42,71,Feb 11,Mar 11,30,238,0.0750

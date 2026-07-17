@@ -1,0 +1,153 @@
+{
+  "spec_version": "2.0.0",
+  "stage": 1,
+  "_README": "The contract. Every downstream stage inherits these definitions. v2.0 separates the two distinct meanings of 'nearest': nearest in TIME vs nearest in SPACE. Gated by: python verify/gate.py --stage 1",
+
+  "_changelog": {
+    "1.0.0": "natal_totality_path bounded to +/-12mo. FLAWED: totals occur worldwide only ~every 18mo, so most users got null.",
+    "1.1.0": "Widened to lifetime, distance-ranked. Better, but still missed that many LOCATIONS go centuries without totality.",
+    "2.0.0": "Human-directed restructure. Three distinct questions, three distinct fields: nearest eclipse in time (any type); nearest TOTAL in time (anywhere on Earth); nearest TOTAL that actually touched the birthplace (searched across the ENTIRE catalog, because droughts run for centuries). Plus closest_approach for the near-miss story."
+  },
+
+  "constants": {
+    "LIFESPAN_YEARS": 85,
+    "_lifespan_note": "Single source of truth. Optional death_date input overrides. Used by closest_approach, saros_next_returns, and the headline ladder. NOT used by totality_over_birthplace, which is catalog-wide by design.",
+    "NATAL_WINDOW_DAYS": 365.25,
+    "ECLIPSE_TYPE_PRIORITY": ["TOTAL", "HYBRID", "ANNULAR", "PARTIAL"],
+    "_priority_note": "Totality outranks everything, everywhere in this product. A nearby annular never displaces a distant total.",
+    "CATALOG_RANGE": "-1999 to +3000 (NASA Five Millennium Canon)"
+  },
+
+  "inputs": {
+    "birth_date": "ISO date string. Julian pre-1582-10-15, Gregorian after (NASA canon convention). See field calendar_system.",
+    "birth_place": "Place name resolved to lat/lon, or raw 'lat, lon'. Decimal degrees, WGS84.",
+    "death_date": "OPTIONAL. If absent, lifetime = birth + LIFESPAN_YEARS."
+  },
+
+  "science_meaning_boundary": "EVERY value this product returns is real positional astronomy computed from the NASA Five Millennium Canon. We assert geometry as fact: where the shadow fell, when, for how long, at what solar altitude. We do NOT assert that any eclipse influenced, predicted, or caused anything in a person's life. The natal-eclipse-path framing (Jayne, Johndro, Meridian) is the historical inspiration for asking 'which shadow passed nearest your birth?' -- but we answer with ephemerides, not astrology. User-facing copy must never use causal or predictive language ('your eclipse shapes...', 'destined', 'means that you...'). Permitted register: factual, evocative, second-person about GEOMETRY ('the Moon's shadow came within 212 km of where you were born'). We hand people the true sky and let them bring their own meaning. Hard product constraint, not a style note.",
+
+  "fields": [
+    {
+      "name": "calendar_system",
+      "definition": "Which calendar the birth_date is interpreted in. Surfaced so no date arithmetic silently mixes systems.",
+      "source": "Derived from birth_date; convention matches NASA canon.",
+      "computation": "julian if birth_date < 1582-10-15 else gregorian. Convert to a single proleptic-Gregorian JD internally for ALL arithmetic; keep the label for display only.",
+      "lookup_or_local_circumstances": "derived",
+      "returns": "'julian' | 'gregorian'",
+      "_trap": "The project's known calendar trap. Never bin raw month/day across the full span without this."
+    },
+
+    {
+      "name": "nearest_eclipse_any_type",
+      "definition": "QUESTION 1 -- NEAREST IN TIME, ANY TYPE. The solar eclipse of any kind (total, hybrid, annular, partial) whose date falls closest to the birth date, anywhere on Earth. 'The eclipse that bracketed your arrival.'",
+      "source": "data/nasa_5millennium_solar_eclipses.csv",
+      "computation": "argmin(abs(eclipse_jd - birth_jd)) over ALL solar eclipses in the catalog, no type filter, no location filter. Tie-break: earlier eclipse. Return signed days_offset (negative = eclipse preceded birth).",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "{eclipse_id, date, eclipse_type, saros, magnitude, gamma, days_offset}",
+      "_note": "Signed offset is deliberate: 'the shadow fell nine days before you did' is better than an absolute value. Never null -- eclipses occur 2-5x/year."
+    },
+
+    {
+      "name": "nearest_total_anywhere",
+      "definition": "QUESTION 2 -- NEAREST IN TIME, TOTAL ONLY, ANY LOCATION. The TOTAL solar eclipse closest in time to the birth date, regardless of where on Earth its shadow fell. 'Your natal total' -- the totality the universe was staging when you arrived, even if it happened over an empty ocean.",
+      "source": "data/nasa_5millennium_solar_eclipses.csv",
+      "computation": "Filter to eclipse_type in [TOTAL, HYBRID]. argmin(abs(eclipse_jd - birth_jd)) across the FULL CATALOG. Tie-break: earlier. Include the greatest-eclipse lat/lon and a human-readable region so the user learns WHERE it fell. Typically within ~9 months of any birth date (totals recur ~every 18mo), so effectively never null.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "{eclipse_id, date, eclipse_type, saros, days_offset, greatest_eclipse_lat, greatest_eclipse_lon, region_name, duration_secs}",
+      "_note": "This is the field that ALWAYS gives every user a real total to call their own -- solving the null problem without distorting either of the other two questions."
+    },
+
+    {
+      "name": "totality_over_birthplace",
+      "definition": "QUESTION 3 -- NEAREST IN TIME, TOTAL, WHOSE PATH ACTUALLY CONTAINED THE BIRTHPLACE. Searched across the ENTIRE 5-millennium catalog, NOT a lifetime, because many locations go CENTURIES between totalities (London: 1715 -> 2090). Returns BOTH the last totality before the birth date and the next one after it.",
+      "source": "Path-of-totality polygons in outputs/path_index.json.",
+      "computation": "Select all TOTAL/HYBRID eclipses whose path-of-totality polygon CONTAINS the birthplace (geodesic point-in-polygon, distance == 0). Search the FULL catalog range. From that set: previous = the latest such eclipse before birth_date; next = the earliest after. Compute drought_years = next.date - previous.date (the birthplace's totality gap that the person was born inside). Set ever=false and both to null ONLY if the catalog contains no totality over this point at all -- state that plainly, never approximate with a nearby path.",
+      "lookup_or_local_circumstances": "lookup (geometry); duration/sun_altitude at the point require local circumstances -- see next_totality_home_circumstances",
+      "returns": "{ever: bool, previous: {eclipse_id, date, years_before_birth} | null, next: {eclipse_id, date, years_after_birth, age_at_event | null} | null, drought_years: number | null}",
+      "_note": "Directly leverages the project's existing country-drought research, made personal. 'The last time the Moon's shadow touched your birthplace was 1715. The next time will be 2090. You were born into a 375-year gap.' That is the single most arresting fact this product can tell most people -- and it is only findable with a catalog-wide search."
+    },
+
+    {
+      "name": "closest_approach",
+      "definition": "THE NEAR-MISS. Among TOTAL eclipses in the person's lifetime, the one whose path of totality passed closest to the birthplace WITHOUT necessarily touching it. Measured in kilometres. This is the consolation and the invitation: how close the shadow came, and which way you'd have had to travel.",
+      "source": "Path polygons in outputs/path_index.json.",
+      "computation": "Filter to TOTAL/HYBRID with date in [birth, birth + LIFESPAN_YEARS] (or death_date). For each, geodesic (WGS84) distance from birthplace to the NEAREST POINT on the path-of-totality polygon; 0 if inside. Return argmin(distance). An 85-year window holds ~55-60 totals worldwide, so this is effectively never null.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "{eclipse_id, date, distance_km, inside_path: bool, bearing_from_birthplace, age_at_event}",
+      "_note": "Distinct from totality_over_birthplace, which requires distance == 0. This one answers 'how close did it get'; that one answers 'did it ever actually arrive'. Both are interesting and they are NOT the same question."
+    },
+
+    {
+      "name": "natal_eclipse_window",
+      "definition": "ALL solar eclipses of ANY type within +/-12 months of the birth date -- the eclipses that bracketed the person's arrival, with type recorded.",
+      "source": "data/nasa_5millennium_solar_eclipses.csv",
+      "computation": "All solar eclipses with date in birth_jd +/- NATAL_WINDOW_DAYS, any type. Record type, date, signed days_offset, saros, and (for total/hybrid/annular) the geodesic distance from the birthplace to that path. Sort by abs(days_offset). Return [] (empty list, NOT null) if none.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "[{eclipse_id, date, eclipse_type, days_offset, saros, distance_km_to_path | null}]",
+      "_note": "Annulars and partials get their due here without ever competing with totality for the headline."
+    },
+
+    {
+      "name": "next_totality_home",
+      "definition": "The next total eclipse whose path crosses the birthplace after a reference date (default: today), WITH its local circumstances -- what an observer standing there would actually see.",
+      "source": "Path index (geometry) + Besselian elements (local circumstances).",
+      "computation": "MIXED FIELD, flagged deliberately. Path-crosses-birthplace is pure geometry. But duration_of_totality and sun_altitude AT THAT LOCATION are LOCAL CIRCUMSTANCES computed from Besselian elements via Skyfield/astropy -- the catalog's lat/lon is the point of GREATEST eclipse and CANNOT answer 'what will an observer here see'. Return null if no future totality crosses the point.",
+      "lookup_or_local_circumstances": "mixed -- geometry lookup + local circumstances",
+      "returns": "{eclipse_id, date, years_from_now, duration_of_totality_s, sun_altitude_deg, is_horizon_totality} | null",
+      "_note": "is_horizon_totality = sun_altitude < 5 deg. This is where the sunset research lands in the product: as a rare, delightful flag rather than a whole atlas."
+    },
+
+    {
+      "name": "birthday_tier",
+      "definition": "S/A/B/C tier for the birthday's calendar date (month-day), from the project's audited total-eclipse rankings. 'Is your birthday an elite eclipse date?'",
+      "source": "outputs/total_eclipse_day_of_year_counts.csv, outputs/total_eclipse_efficiency_top25.csv, outputs/total_eclipse_efficiency_bottom25.csv, cumulative-totality outputs. CANONICAL and audited -- not recomputed.",
+      "computation": "Look up month-day across three axes (count rank, cumulative-totality rank, efficiency rank). Tier from thresholds in outputs/tier_thresholds.json (Stage 7), derived from the ACTUAL distributions. Feb 29 scored on its own, never folded into Feb 28, flagged as a documented overperformer.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "{tier, count_rank, totality_rank, efficiency_rank, note}",
+      "_note": "Jul 22 leads on count and cumulative totality. May 18 leads on efficiency. Jun 30 is elite across all three."
+    },
+
+    {
+      "name": "saros_series",
+      "definition": "The Saros series containing nearest_total_anywhere, with lifecycle position -- the 'family' the person's total belongs to.",
+      "source": "saros column in the NASA canon; per-series metrics from the Saros fingerprint pass.",
+      "computation": "Read saros of nearest_total_anywhere (NOT nearest_eclipse_any_type -- the family should be a totality family). Compute member_index, total_members, start_year, end_year, lifecycle_stage (young/mature/declining) from position and gamma trend.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "{saros_number, member_index, total_members, start_year, end_year, lifecycle_stage}"
+    },
+
+    {
+      "name": "saros_next_returns",
+      "definition": "The next members of that Saros series within the person's lifetime -- their inheritable eclipses.",
+      "source": "NASA canon, filtered by saros number.",
+      "computation": "Members with date in (birth, birth + LIFESPAN_YEARS). One Saros = 6585.32 days (18y 11d ~8h). The ~8h remainder shifts each return ~120 deg WEST, so consecutive returns land on different continents. Every THIRD return (one exeligmos = 3 Saros = 54y 33d) comes back to roughly the SAME longitude. Flag same_longitude_band and crosses_birthplace per return.",
+      "lookup_or_local_circumstances": "lookup",
+      "returns": "[{date, member_index, eclipse_type, same_longitude_band, crosses_birthplace, age_at_event}]",
+      "_note": "The exeligmos is the emotional payload: your family's eclipse returns to YOUR side of the world roughly once every 54 years. Most people get one, maybe two, in a lifetime."
+    },
+
+    {
+      "name": "headline",
+      "definition": "The single most shareable line, chosen by a deterministic priority ladder -- never by an LLM at runtime.",
+      "source": "Composed from the fields above.",
+      "computation": "Fixed ladder, first match wins. (1) BORN_UNDER_SHADOW -- totality_over_birthplace.next or .previous falls within +/-12mo of birth (you were born essentially under the shadow; rarest, always wins). (2) SHADOW_CAME_HOME -- totality_over_birthplace.next occurs within the lifetime (it will touch your birthplace while you live). (3) HORIZON_TOTALITY -- (2) is true AND next_totality_home.sun_altitude < 5 deg. (4) LONG_DROUGHT -- totality_over_birthplace.drought_years is large (>=200); lead with the drought you were born into. (5) ELITE_BIRTHDAY -- birthday_tier == 'S'. (6) SAROS_RETURNS_HOME -- an exeligmos return lands in the same longitude band during the lifetime. (7) FALLBACK_CLOSEST_APPROACH -- 'the closest the Moon's shadow came to where you were born was N km' (always available). (8) NEVER_TOUCHED -- totality_over_birthplace.ever == false; state it plainly and honestly; it is a striking fact, not a failure. GRACEFUL_NULL remains implemented as a last resort but should be unreachable; it must NEVER be replaced by fabrication.",
+      "lookup_or_local_circumstances": "derived",
+      "returns": "{text, rule_id, GRACEFUL_NULL: bool}",
+      "_decision": "Deterministic ladder, not model-generated. Identical input must always yield an identical headline; a share card that changes on refresh destroys credibility with the enthusiast audience. An optional model-written FLOURISH may sit ALONGSIDE the headline, never replace it. Rules 1-4, 7 and 8 are all TOTALITY-based: totality outranks every other eclipse type everywhere in this product."
+    }
+  ],
+
+  "runtime_constraints": {
+    "llm_calls": 0,
+    "determinism": "Byte-identical output for identical input. Enforced by verify/gate.py stages 2 and 5.",
+    "latency_target_ms": 100,
+    "rationale": "Every field is a spatial query or table lookup. A model at runtime adds variance where none is wanted, costs money per request, and turns a viral moment into a liability."
+  },
+
+  "non_goals": [
+    "Predicting or interpreting life events from eclipses.",
+    "Widening or narrowing any search window to avoid an inconvenient answer.",
+    "Substituting a nearby path when the honest answer is 'totality has never touched this place'.",
+    "Inventing a city, path, eclipse, or Saros number under any circumstances."
+  ]
+}

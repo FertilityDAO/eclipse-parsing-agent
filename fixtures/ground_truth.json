@@ -1,0 +1,106 @@
+{
+  "_README": "THE JUDGE FOR LOOP B. Every `expected` value here must be TRANSCRIBED BY A HUMAN (or a model with a cited source) from published NASA/Espenak local-circumstances output or Jubier's interactive maps. A value the solver produced is NOT ground truth — it is the thing under test. gate_b.py REFUSES TO RUN while any anchor is unpopulated. This is structural: it makes fabricating ground truth impossible rather than merely forbidden.",
+
+  "_how_to_populate": [
+    "1. Open NASA/Espenak local circumstances (or Jubier's map) for the eclipse date.",
+    "2. Enter the observer lat/lon exactly as given below.",
+    "3. Transcribe: time of max eclipse (UT), sun altitude at max, duration of totality, in_umbra.",
+    "4. Record the URL you read it from in `source`.",
+    "5. Set `populated: true`.",
+    "Do NOT round. Do NOT infer. If a source doesn't give a value, leave it null and note why."
+  ],
+
+  "tolerances": {
+    "modern": {
+      "_era": "1600 to 2200",
+      "sun_alt_deg": 0.10,
+      "max_time_s": 2,
+      "duration_s": 2,
+      "centerline_km": 2.0,
+      "in_umbra": "exact"
+    },
+    "ancient": {
+      "_era": "before 1600",
+      "_note": "Position tolerance is NOT a fixed number. It is the delta-T uncertainty band from outputs/delta_t_decision.json for that era. Earth turns 15 deg/hour: a 1-hour delta-T error moves the path ~1500 km. Report the band; do not pretend to precision you do not have.",
+      "sun_alt_deg": 0.5,
+      "position_km": "SEE_DELTA_T_BAND"
+    },
+    "crosscheck_besselian_vs_skyfield": {
+      "_note": "Two independent methods must agree with EACH OTHER, tighter than either agrees with published values.",
+      "sun_alt_deg": 0.05,
+      "max_time_s": 2,
+      "duration_s": 1
+    }
+  },
+
+  "anchors": [
+    {
+      "id": "aug12_2026_castellon",
+      "populated": false,
+      "eclipse_date": "2026-08-12",
+      "observer": {"name": "Castellon de la Plana, Spain", "lat": 39.9864, "lon": -0.0513},
+      "why": "THE CANARY. The human's actual observing site. Low-sun totality on Spain's east coast. If the engine gets this wrong, nothing else in the project is trustworthy — and unlike every other anchor, this one gets validated against reality in person.",
+      "expected": {
+        "in_umbra": null,
+        "max_time_ut": null,
+        "sun_alt_deg": null,
+        "duration_s": null
+      },
+      "source": null
+    },
+    {
+      "id": "aug12_2026_zaragoza",
+      "populated": false,
+      "eclipse_date": "2026-08-12",
+      "observer": {"name": "Zaragoza, Spain", "lat": 41.6488, "lon": -0.8891},
+      "why": "Second point on the same path, well inland — catches a solver that gets one point right by luck.",
+      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
+      "source": null
+    },
+    {
+      "id": "aug12_2026_madrid_NEGATIVE",
+      "populated": false,
+      "eclipse_date": "2026-08-12",
+      "observer": {"name": "Madrid, Spain", "lat": 40.4168, "lon": -3.7038},
+      "why": "NEGATIVE CONTROL. Outside the path of totality. A solver that says 'yes' to everything passes every positive test. This one must return in_umbra: false.",
+      "expected": {"in_umbra": null, "sun_alt_deg": null, "duration_s": null},
+      "source": null
+    },
+    {
+      "id": "aug21_2017_carbondale",
+      "populated": false,
+      "eclipse_date": "2017-08-21",
+      "observer": {"name": "Carbondale, Illinois, USA", "lat": 37.7273, "lon": -89.2168},
+      "why": "The most heavily documented eclipse in history. Ground truth is abundant and unambiguous. High sun altitude — the opposite regime from the Spain anchor.",
+      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
+      "source": null
+    },
+    {
+      "id": "jul22_2009_shanghai",
+      "populated": false,
+      "eclipse_date": "2009-07-22",
+      "observer": {"name": "Shanghai, China", "lat": 31.2304, "lon": 121.4737},
+      "why": "The longest totality of the 21st century, and it falls on Jul 22 — the project's top-ranked date. Tests the long-duration end of the range.",
+      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
+      "source": null
+    },
+    {
+      "id": "apr8_2024_burlington",
+      "populated": false,
+      "eclipse_date": "2024-04-08",
+      "observer": {"name": "Burlington, Vermont, USA", "lat": 44.4759, "lon": -73.2121},
+      "why": "Recent, extremely well documented, northern latitude. Tests the oblateness correction where it bites hardest.",
+      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
+      "source": null
+    },
+    {
+      "id": "ancient_delta_t_probe",
+      "populated": false,
+      "eclipse_date": "TBD — pick a well-studied ancient eclipse with historical records",
+      "observer": {"name": "TBD", "lat": null, "lon": null},
+      "why": "DELTA-T STRESS TEST. Candidates: the 763 BCE Bur-Sagale eclipse (Assyrian record), or Thales' eclipse (585 BCE). These are the events historians used to CONSTRAIN delta-T in the first place. The point is not to nail the position — it is to confirm the engine's error stays inside the documented uncertainty band from B2. Passing this with suspiciously tight agreement is itself a red flag: it means delta-T is being applied twice, or not at all.",
+      "expected": {"in_umbra": null, "position_uncertainty_km": null},
+      "source": null
+    }
+  ]
+}
