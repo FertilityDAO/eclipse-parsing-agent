@@ -54,6 +54,7 @@ STABILITY POLICY
 from __future__ import annotations
 
 import json
+import math
 import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -65,11 +66,16 @@ from typing import List, Optional, Tuple, Union
 _SRC = Path(__file__).resolve().parent
 if str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
-import besselian as _bess          # noqa: E402  (B3 core solver)
-import path_engine as _index       # noqa: E402  (B7 spatial index)
+import besselian as _bess                 # noqa: E402  (B3 core solver)
+import crosscheck_skyfield as _sky         # noqa: E402  (B4 independent auditor)
+import path_engine as _index              # noqa: E402  (B7 spatial index)
 
 _ROOT = _SRC.parent
 _DELTA_T_PATH = _ROOT / "outputs" / "delta_t_decision.json"
+_PATH_INDEX_PATH = _ROOT / "outputs" / "path_index.json"
+
+# DE440s ephemeris span (crosscheck_skyfield). cross_check is only valid here.
+_CROSSCHECK_MIN_YEAR, _CROSSCHECK_MAX_YEAR = 1849, 2150
 
 API_VERSION = "1.0.0-draft"
 
@@ -439,6 +445,120 @@ def _ordinal(ymd: Tuple[int, int, int]) -> int:
     return int(y * 365.2425 + (m - 1) * 30.44 + d)
 
 
+def _greatest_time_ut(row: dict) -> Optional[str]:
+    """UT of greatest eclipse, from the catalog TD time minus the frozen Delta-T."""
+    try:
+        hh, mm, ss = (int(x) for x in row["td_ge"].split(":"))
+    except (KeyError, ValueError):
+        return None
+    el = _bess._elements(row)
+    td_ge_hours = hh + mm / 60.0 + ss / 3600.0
+    return _bess._td_hours_to_ut_iso(el, td_ge_hours - el["t0"])
+
+
+def _eclipse_info(eclipse_id: str, row: dict, ymd: Tuple[int, int, int]) -> "EclipseInfo":
+    width = (row.get("path_width") or "").strip()
+    try:
+        width_km = float(width) if width else None
+        if width_km == 0.0:
+            width_km = None
+    except ValueError:
+        width_km = None
+    return EclipseInfo(
+        eclipse_id=eclipse_id,
+        eclipse_type=row["eclipse_type"].strip(),
+        saros=_saros(row),
+        gamma=float(row["gamma"]),
+        magnitude=float(row["magnitude"]),
+        greatest_eclipse=GeoPoint(float(row["lat_dd_ge"]), float(row["lng_dd_ge"])),
+        greatest_time_ut=_greatest_time_ut(row),
+        max_duration_s=float(row.get("duration_secs") or 0.0),
+        path_width_km=width_km,
+        calendar=_calendar(ymd),
+        uncertainty=_uncertainty_for(ymd[0]),
+    )
+
+
+_PATHS_CACHE: dict = {}
+
+
+def _paths_full() -> dict:
+    """Lazy {eclipse_id: full path record} from outputs/path_index.json (geometry
+    is stripped from the B7 spatial index, so path()/closest_approach load it here)."""
+    if not _PATHS_CACHE:
+        data = json.loads(_PATH_INDEX_PATH.read_text(encoding="utf-8"))
+        _PATHS_CACHE.update({p["eclipse_id"]: p for p in data["paths"]})
+    return _PATHS_CACHE
+
+
+def _path_record(eclipse_id: str) -> dict:
+    try:
+        ymd = _bess._parse_iso_date(eclipse_id)
+    except (ValueError, IndexError):
+        raise InvalidQuery(f"bad eclipse id: {eclipse_id!r}")
+    if _bess._CATALOG.get(ymd) is None:
+        raise UnknownEclipse(str(eclipse_id))
+    key = f"{ymd[0]:04d}-{ymd[1]:02d}-{ymd[2]:02d}"
+    rec = _paths_full().get(key)
+    if rec is None:
+        raise InvalidQuery(
+            f"no traced path of totality for {eclipse_id} — not a central total "
+            "eclipse (annular/partial/non-central have no umbral ground path)"
+        )
+    return rec
+
+
+# great-circle geometry (km), for closest_approach
+_R_KM = 6371.0088
+
+
+def _hav_km(la1: float, lo1: float, la2: float, lo2: float) -> float:
+    p1, p2 = math.radians(la1), math.radians(la2)
+    dp, dl = math.radians(la2 - la1), math.radians(lo2 - lo1)
+    a = math.sin(dp / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dl / 2) ** 2
+    return 2 * _R_KM * math.asin(min(1.0, math.sqrt(a)))
+
+
+def _to_vec(la: float, lo: float) -> Tuple[float, float, float]:
+    la, lo = math.radians(la), math.radians(lo)
+    return (math.cos(la) * math.cos(lo), math.cos(la) * math.sin(lo), math.sin(la))
+
+
+def _to_latlon(v: Tuple[float, float, float]) -> Tuple[float, float]:
+    x, y, z = v
+    return math.degrees(math.asin(max(-1.0, min(1.0, z)))), math.degrees(math.atan2(y, x))
+
+
+def _slerp(a, b, f):
+    """Great-circle interpolation between two unit vectors at fraction f."""
+    dot = max(-1.0, min(1.0, a[0] * b[0] + a[1] * b[1] + a[2] * b[2]))
+    om = math.acos(dot)
+    if om < 1e-9:
+        return a
+    s = math.sin(om)
+    c1, c2 = math.sin((1 - f) * om) / s, math.sin(f * om) / s
+    return (c1 * a[0] + c2 * b[0], c1 * a[1] + c2 * b[1], c1 * a[2] + c2 * b[2])
+
+
+def _min_dist_to_ring(lat, lon, ring, step_km=8.0) -> Tuple[float, Tuple[float, float]]:
+    """Minimum great-circle distance (km) from a point to a closed ring, densifying
+    each segment along its great circle so distance and nearest point stay consistent
+    even where the ring's vertices are sparse. ring is [[lon, lat], ...]."""
+    best, foot = math.inf, (lat, lon)
+    for i in range(len(ring) - 1):
+        a_lo, a_la = ring[i]
+        b_lo, b_la = ring[i + 1]
+        seg = _hav_km(a_la, a_lo, b_la, b_lo)
+        n = max(1, int(seg / step_km))
+        va, vb = _to_vec(a_la, a_lo), _to_vec(b_la, b_lo)
+        for k in range(n + 1):
+            p_la, p_lo = _to_latlon(_slerp(va, vb, k / n))
+            d = _hav_km(lat, lon, p_la, p_lo)
+            if d < best:
+                best, foot = d, (p_la, p_lo)
+    return best, foot
+
+
 def _saros(row: dict) -> Optional[int]:
     raw = (row.get("saros") or "").strip()
     try:
@@ -449,15 +569,16 @@ def _saros(row: dict) -> Optional[int]:
 
 def _to_local(lat: float, lon: float, eclipse_id: str, row: dict, r: dict) -> LocalCircumstances:
     ymd = _bess._parse_iso_date(eclipse_id)
+    etype = row["eclipse_type"].strip()  # from the catalog: works for either engine
     is_total = bool(
         r["in_umbra"]
-        and r["eclipse_type"].strip()[:1] == "T"
+        and etype[:1] == "T"
         and r["sun_alt_deg"] > MIN_OBSERVABLE_SUN_ALT
     )
     at_set, at_rise = _horizon_flags(lon, r["max_time"], r["sun_alt_deg"])
     return LocalCircumstances(
         lat=lat, lon=lon, eclipse_id=eclipse_id,
-        eclipse_type=r["eclipse_type"].strip(), saros=_saros(row),
+        eclipse_type=etype, saros=_saros(row),
         in_umbra=bool(r["in_umbra"]), is_total=is_total,
         max_time_ut=r["max_time"], sun_alt_deg=r["sun_alt_deg"],
         duration_s=r["duration_s"], magnitude=r["magnitude"],
@@ -489,8 +610,25 @@ def cross_check(lat: float, lon: float, eclipse_id: str) -> LocalCircumstances:
 
     Different source data (JPL DE440s) and math than `circumstances`. Agreement
     is the engine's trust story; disagreement beyond tolerance is a red flag.
+
+    Raises UnknownEclipse for a bad id, or InvalidQuery if the date falls outside
+    the DE440s ephemeris span (1849-2150).
     """
-    raise NotImplementedError
+    lat, lon = float(lat), float(lon)
+    try:
+        ymd = _bess._parse_iso_date(eclipse_id)
+    except (ValueError, IndexError):
+        raise InvalidQuery(f"bad eclipse id: {eclipse_id!r}")
+    row = _bess._CATALOG.get(ymd)
+    if row is None:
+        raise UnknownEclipse(str(eclipse_id))
+    if not (_CROSSCHECK_MIN_YEAR <= ymd[0] <= _CROSSCHECK_MAX_YEAR):
+        raise InvalidQuery(
+            f"cross_check needs the DE440s range "
+            f"{_CROSSCHECK_MIN_YEAR}-{_CROSSCHECK_MAX_YEAR}; {eclipse_id} is outside"
+        )
+    r = _sky.circumstances(lat, lon, eclipse_id)
+    return _to_local(lat, lon, eclipse_id, row, r)
 
 
 # ============================================================ observer history
@@ -622,15 +760,32 @@ def closest_approach(lat: float, lon: float, eclipse_id: str) -> Approach:
     """How close this eclipse's path of totality came to a point it did not cover.
 
     The honest answer to 'nearest totality' when the point itself is outside the
-    path. Raises UnknownEclipse for a bad id.
+    path. distance_km is 0 when the point saw the eclipse. Raises UnknownEclipse
+    for a bad id, or InvalidQuery for an eclipse with no traced path of totality.
     """
-    raise NotImplementedError
+    lat, lon = float(lat), float(lon)
+    rec = _path_record(eclipse_id)  # raises UnknownEclipse / InvalidQuery
+    unc = _uncertainty_for(_bess._parse_iso_date(eclipse_id)[0])
+    if circumstances(lat, lon, eclipse_id).is_total:
+        return Approach(lat=lat, lon=lon, eclipse_id=eclipse_id, distance_km=0.0,
+                        nearest_point=GeoPoint(round(lat, 4), round(lon, 4)), uncertainty=unc)
+    best, foot = _min_dist_to_ring(lat, lon, rec["geometry"]["coordinates"][0])
+    return Approach(lat=lat, lon=lon, eclipse_id=eclipse_id, distance_km=round(best, 1),
+                    nearest_point=GeoPoint(round(foot[0], 4), round(foot[1], 4)),
+                    uncertainty=unc)
 
 
 # ============================================================ eclipse events
 def eclipse(eclipse_id: str) -> EclipseInfo:
     """Catalog metadata for one eclipse. Raises UnknownEclipse for a bad id."""
-    raise NotImplementedError
+    try:
+        ymd = _bess._parse_iso_date(eclipse_id)
+    except (ValueError, IndexError):
+        raise InvalidQuery(f"bad eclipse id: {eclipse_id!r}")
+    row = _bess._CATALOG.get(ymd)
+    if row is None:
+        raise UnknownEclipse(str(eclipse_id))
+    return _eclipse_info(eclipse_id, row, ymd)
 
 
 def path(eclipse_id: str) -> EclipsePath:
@@ -639,7 +794,14 @@ def path(eclipse_id: str) -> EclipsePath:
     Raises UnknownEclipse for a bad id, or InvalidQuery for a non-central eclipse
     with no path of totality on the ground.
     """
-    raise NotImplementedError
+    rec = _path_record(eclipse_id)
+    return EclipsePath(
+        eclipse_id=rec["eclipse_id"],
+        centerline=[GeoPoint(la, lo) for lo, la in rec["central_line"]],
+        polygon=[GeoPoint(la, lo) for lo, la in rec["geometry"]["coordinates"][0]],
+        bbox=tuple(rec["bbox"]),
+        crosses_antimeridian=bool(rec["crosses_antimeridian"]),
+    )
 
 
 def eclipses(
@@ -652,7 +814,24 @@ def eclipses(
 
     kind filters by type ('total' in v1; others reserved).
     """
-    raise NotImplementedError
+    if kind != KIND_TOTAL:
+        if kind in KINDS:
+            raise NotImplementedError(f"kind={kind!r} not enabled in v1 (total-only)")
+        raise InvalidQuery(f"unknown kind: {kind!r}")
+    lo = _ymd(start, upper=False) if start is not None else None
+    hi = _ymd(end, upper=True) if end is not None else None
+    out: List[EclipseInfo] = []
+    for ymd, row in _bess._CATALOG.items():
+        if row["eclipse_type"].strip()[:1] != "T":
+            continue
+        if lo is not None and ymd < lo:
+            continue
+        if hi is not None and ymd > hi:
+            continue
+        eid = f"{ymd[0]:04d}-{ymd[1]:02d}-{ymd[2]:02d}"
+        out.append(_eclipse_info(eid, row, ymd))
+    out.sort(key=lambda e: _bess._parse_iso_date(e.eclipse_id))
+    return out
 
 
 # ============================================================ composed reports
