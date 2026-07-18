@@ -1,0 +1,330 @@
+{
+  "stage": "B5",
+  "ground_truth": "fixtures\\ground_truth.json",
+  "note": "Expected values are externally sourced (see per-anchor `source`); engine outputs here are the values under test, not ground truth.",
+  "anchors_evaluated": 6,
+  "deferred": [
+    "ancient_delta_t_probe"
+  ],
+  "all_pass": true,
+  "results": [
+    {
+      "id": "aug12_2026_castellon",
+      "observer": {
+        "name": "Castellon de la Plana, Spain",
+        "lat": 39.9864,
+        "lon": -0.0513
+      },
+      "eclipse_date": "2026-08-12",
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; NationalEclipse.com 2026 city data, https://nationaleclipse.com/cities/lists/2026-total-solar-eclipse-cities.html",
+      "besselian": {
+        "in_umbra": true,
+        "max_time": "2026-08-12T18:32:01Z",
+        "sun_alt_deg": 4.448189,
+        "duration_s": 93.415,
+        "magnitude": 1.010451,
+        "separation": 0.002914609,
+        "umbra_radius": -0.008445375,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": true,
+        "max_time": "2026-08-12T18:32:07Z",
+        "sun_alt_deg": 4.430184,
+        "duration_s": 95.056,
+        "magnitude": 1.010774,
+        "separation": 0.002843059,
+        "moon_radius_deg": 0.271585622,
+        "sun_radius_deg": 0.26307364
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": true,
+          "besselian": true,
+          "skyfield": true,
+          "pass": true
+        },
+        "duration_s": {
+          "expected": 94,
+          "besselian": 93.415,
+          "skyfield": 95.056,
+          "tol": 2,
+          "delta": 0.585,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 4.448189,
+          "skyfield": 4.430184,
+          "tol": 0.05,
+          "delta": 0.018005,
+          "pass": true
+        }
+      }
+    },
+    {
+      "id": "aug12_2026_zaragoza",
+      "observer": {
+        "name": "Zaragoza, Spain",
+        "lat": 41.6488,
+        "lon": -0.8891
+      },
+      "eclipse_date": "2026-08-12",
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; NationalEclipse.com 2026 city data, https://nationaleclipse.com/cities/lists/2026-total-solar-eclipse-cities.html",
+      "besselian": {
+        "in_umbra": true,
+        "max_time": "2026-08-12T18:29:40Z",
+        "sun_alt_deg": 5.924149,
+        "duration_s": 84.529,
+        "magnitude": 1.007156,
+        "separation": 0.004781035,
+        "umbra_radius": -0.008566358,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": true,
+        "max_time": "2026-08-12T18:29:45Z",
+        "sun_alt_deg": 5.906323,
+        "duration_s": 85.668,
+        "magnitude": 1.007261,
+        "separation": 0.00481568,
+        "moon_radius_deg": 0.27171015,
+        "sun_radius_deg": 0.263073852
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": true,
+          "besselian": true,
+          "skyfield": true,
+          "pass": true
+        },
+        "duration_s": {
+          "expected": 84,
+          "besselian": 84.529,
+          "skyfield": 85.668,
+          "tol": 2,
+          "delta": 0.529,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 5.924149,
+          "skyfield": 5.906323,
+          "tol": 0.05,
+          "delta": 0.017826,
+          "pass": true
+        }
+      }
+    },
+    {
+      "id": "aug12_2026_madrid_NEGATIVE",
+      "observer": {
+        "name": "Madrid, Spain",
+        "lat": 40.4168,
+        "lon": -3.7038
+      },
+      "eclipse_date": "2026-08-12",
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_August_12,_2026",
+      "besselian": {
+        "in_umbra": false,
+        "max_time": "2026-08-12T18:32:17Z",
+        "sun_alt_deg": 7.206718,
+        "duration_s": 0.0,
+        "magnitude": 0.998637,
+        "separation": 0.009386072,
+        "umbra_radius": -0.008665165,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": false,
+        "max_time": "2026-08-12T18:32:23Z",
+        "sun_alt_deg": 7.188331,
+        "duration_s": 0.0,
+        "magnitude": 0.998974,
+        "separation": 0.009277845,
+        "moon_radius_deg": 0.271812032,
+        "sun_radius_deg": 0.263074179
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": false,
+          "besselian": false,
+          "skyfield": false,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 7.206718,
+          "skyfield": 7.188331,
+          "tol": 0.05,
+          "delta": 0.018387,
+          "pass": true
+        }
+      }
+    },
+    {
+      "id": "aug21_2017_carbondale",
+      "observer": {
+        "name": "Carbondale, Illinois, USA",
+        "lat": 37.7273,
+        "lon": -89.2168
+      },
+      "eclipse_date": "2017-08-21",
+      "source": "NationalEclipse.com 2017 total eclipse city data, https://nationaleclipse.com/cities/lists/cities_total_2017.html ; Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_August_21,_2017 ; EclipseWise (Espenak), https://www.eclipsewise.com/solar/SEnews/TSE2017/TSE2017states/TSE2017stateIL.html",
+      "besselian": {
+        "in_umbra": true,
+        "max_time": "2017-08-21T18:21:22Z",
+        "sun_alt_deg": 63.691463,
+        "duration_s": 157.454,
+        "magnitude": 1.012563,
+        "separation": 0.001447371,
+        "umbra_radius": -0.0081044,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": true,
+        "max_time": "2017-08-21T18:21:24Z",
+        "sun_alt_deg": 63.689962,
+        "duration_s": 159.619,
+        "magnitude": 1.012719,
+        "separation": 0.00147402,
+        "moon_radius_deg": 0.271715113,
+        "sun_radius_deg": 0.263537154
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": true,
+          "besselian": true,
+          "skyfield": true,
+          "pass": true
+        },
+        "duration_s": {
+          "expected": 157,
+          "besselian": 157.454,
+          "skyfield": 159.619,
+          "tol": 2,
+          "delta": 0.454,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 63.691463,
+          "skyfield": 63.689962,
+          "tol": 0.05,
+          "delta": 0.001501,
+          "pass": true
+        }
+      }
+    },
+    {
+      "id": "jul22_2009_shanghai",
+      "observer": {
+        "name": "Shanghai, China",
+        "lat": 31.2304,
+        "lon": 121.4737
+      },
+      "eclipse_date": "2009-07-22",
+      "source": "Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_July_22,_2009 ; NASA GSFC (Espenak) TSE2009 monograph, https://eclipse.gsfc.nasa.gov/SEmono/TSE2009/TSE2009.html",
+      "besselian": {
+        "in_umbra": true,
+        "max_time": "2009-07-22T01:39:18Z",
+        "sun_alt_deg": 56.530611,
+        "duration_s": 300.647,
+        "magnitude": 1.018205,
+        "separation": 0.010249367,
+        "umbra_radius": -0.019480845,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": true,
+        "max_time": "2009-07-22T01:39:18Z",
+        "sun_alt_deg": 56.533394,
+        "duration_s": 303.057,
+        "magnitude": 1.018432,
+        "separation": 0.010613811,
+        "moon_radius_deg": 0.282659137,
+        "sun_radius_deg": 0.262373005
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": true,
+          "besselian": true,
+          "skyfield": true,
+          "pass": true
+        },
+        "duration_s": {
+          "expected": 302,
+          "besselian": 300.647,
+          "skyfield": 303.057,
+          "tol": 2,
+          "delta": 1.353,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 56.530611,
+          "skyfield": 56.533394,
+          "tol": 0.05,
+          "delta": 0.002783,
+          "pass": true
+        }
+      }
+    },
+    {
+      "id": "apr8_2024_burlington",
+      "observer": {
+        "name": "Burlington, Vermont, USA",
+        "lat": 44.4759,
+        "lon": -73.2121
+      },
+      "eclipse_date": "2024-04-08",
+      "source": "NationalEclipse.com per-city local circumstances, https://nationaleclipse.com/cities/burlington_vermont.html",
+      "besselian": {
+        "in_umbra": true,
+        "max_time": "2024-04-08T19:27:39Z",
+        "sun_alt_deg": 40.37725,
+        "duration_s": 195.539,
+        "magnitude": 1.015169,
+        "separation": 0.005337527,
+        "umbra_radius": -0.013219942,
+        "eclipse_type": "T"
+      },
+      "skyfield": {
+        "in_umbra": true,
+        "max_time": "2024-04-08T19:27:45Z",
+        "sun_alt_deg": 40.362365,
+        "duration_s": 196.824,
+        "magnitude": 1.015203,
+        "separation": 0.005571979,
+        "moon_radius_deg": 0.279835743,
+        "sun_radius_deg": 0.266170521
+      },
+      "checks": {
+        "in_umbra": {
+          "expected": true,
+          "besselian": true,
+          "skyfield": true,
+          "pass": true
+        },
+        "sun_alt_deg": {
+          "expected": 40.4,
+          "besselian": 40.37725,
+          "skyfield": 40.362365,
+          "tol": 0.1,
+          "delta": 0.02275,
+          "pass": true
+        },
+        "duration_s": {
+          "expected": 195,
+          "besselian": 195.539,
+          "skyfield": 196.824,
+          "tol": 2,
+          "delta": 0.539,
+          "pass": true
+        },
+        "crosscheck_sun_alt_deg": {
+          "besselian": 40.37725,
+          "skyfield": 40.362365,
+          "tol": 0.05,
+          "delta": 0.014885,
+          "pass": true
+        }
+      }
+    }
+  ]
+}

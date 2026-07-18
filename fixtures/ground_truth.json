@@ -10,6 +10,12 @@
     "Do NOT round. Do NOT infer. If a source doesn't give a value, leave it null and note why."
   ],
 
+  "_provenance": {
+    "populated_by": "Claude (Opus 4.8) on 2026-07-18, per human instruction 'I gather + cite all of them'. Values transcribed from external published sources listed per anchor; NONE derived from the solver under test (src/besselian.py) or the cross-checker (src/crosscheck_skyfield.py).",
+    "sourcing_rule_followed": "Where a published source reported a field only at whole-degree precision (e.g. IGN sun altitude '4 deg'), the graded field `sun_alt_deg` was left null rather than frozen, because a whole-degree value cannot be validated against the 0.10 deg modern tolerance without manufacturing a false failure. The coarse value is preserved in `_source_values` for the record. This follows _how_to_populate rule 5.",
+    "known_gap": "Precise (0.1 deg) sun altitude at exact anchor coordinates is only populated for Burlington 2024 (nationaleclipse.com per-city page, coordinates matching the anchor to 5 decimals). The definitive per-coordinate source for the others (Xavier Jubier's calculator; timeanddate per-city altitude) blocks automated fetches. Follow-up task: transcribe Jubier altitudes for the Spain and high-sun anchors to widen altitude coverage — especially Castellon, the in-person canary."
+  },
+
   "tolerances": {
     "modern": {
       "_era": "1600 to 2200",
@@ -36,69 +42,122 @@
   "anchors": [
     {
       "id": "aug12_2026_castellon",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2026-08-12",
       "observer": {"name": "Castellon de la Plana, Spain", "lat": 39.9864, "lon": -0.0513},
       "why": "THE CANARY. The human's actual observing site. Low-sun totality on Spain's east coast. If the engine gets this wrong, nothing else in the project is trustworthy — and unlike every other anchor, this one gets validated against reality in person.",
       "expected": {
-        "in_umbra": null,
-        "max_time_ut": null,
+        "in_umbra": true,
+        "max_time_ut": "2026-08-12T18:32:07Z",
         "sun_alt_deg": null,
-        "duration_s": null
+        "duration_s": 94
       },
-      "source": null
+      "_source_values": {
+        "duration": "nationaleclipse.com 2026 city list: 1:34 (94 s). IGN: 1:35 (95 s).",
+        "sun_alt_deg_coarse": "IGN: ~4 deg (whole degree only — left null in `expected`, insufficient for 0.10 deg tolerance).",
+        "max_time": "IGN: 20:32:07 CEST (UTC+2) = 18:32:07 UT. Informational; not graded by gate_b.b5."
+      },
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; NationalEclipse.com 2026 city data, https://nationaleclipse.com/cities/lists/2026-total-solar-eclipse-cities.html"
     },
     {
       "id": "aug12_2026_zaragoza",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2026-08-12",
       "observer": {"name": "Zaragoza, Spain", "lat": 41.6488, "lon": -0.8891},
       "why": "Second point on the same path, well inland — catches a solver that gets one point right by luck.",
-      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
-      "source": null
+      "expected": {
+        "in_umbra": true,
+        "max_time_ut": "2026-08-12T18:29:45Z",
+        "sun_alt_deg": null,
+        "duration_s": 84
+      },
+      "_source_values": {
+        "duration": "nationaleclipse.com 2026 city list: totality begins 20:29:04 CEST, duration 1:24 (84 s). IGN: 1:25 (85 s).",
+        "sun_alt_deg_coarse": "IGN: ~6 deg (whole degree only — left null in `expected`).",
+        "max_time": "IGN: 20:29:45 CEST (UTC+2) = 18:29:45 UT. Informational; not graded."
+      },
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; NationalEclipse.com 2026 city data, https://nationaleclipse.com/cities/lists/2026-total-solar-eclipse-cities.html"
     },
     {
       "id": "aug12_2026_madrid_NEGATIVE",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2026-08-12",
       "observer": {"name": "Madrid, Spain", "lat": 40.4168, "lon": -3.7038},
       "why": "NEGATIVE CONTROL. Outside the path of totality. A solver that says 'yes' to everything passes every positive test. This one must return in_umbra: false.",
-      "expected": {"in_umbra": null, "sun_alt_deg": null, "duration_s": null},
-      "source": null
+      "expected": {"in_umbra": false, "sun_alt_deg": null, "duration_s": null},
+      "_source_values": {
+        "in_umbra": "Madrid lies OUTSIDE the path of totality — a deep partial (~99% obscuration) only. Confirmed by IGN (Madrid shown in partial zone), Wikipedia 'Solar eclipse of August 12, 2026' (totality cities list excludes Madrid), and NationalEclipse.com (Madrid absent from Spain totality tables)."
+      },
+      "source": "Instituto Geografico Nacional (IGN), https://astronomia.ign.es/en/eclipses-de-sol-y-luna/eclipse-total-sol-de-12-de-agosto-2026 ; Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_August_12,_2026"
     },
     {
       "id": "aug21_2017_carbondale",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2017-08-21",
       "observer": {"name": "Carbondale, Illinois, USA", "lat": 37.7273, "lon": -89.2168},
       "why": "The most heavily documented eclipse in history. Ground truth is abundant and unambiguous. High sun altitude — the opposite regime from the Spain anchor.",
-      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
-      "source": null
+      "expected": {
+        "in_umbra": true,
+        "max_time_ut": "2017-08-21T18:21:14Z",
+        "sun_alt_deg": null,
+        "duration_s": 157
+      },
+      "_source_values": {
+        "duration": "NationalEclipse.com 2017 city list: totality begins 1:20:06 PM CDT, duration 2:37 (157 s). Carbondale sits ~11 km N of the centerline (max 2:40.3 on centerline ~10 km S).",
+        "sun_alt_deg_coarse": "~60-63 deg reported near Carbondale; no precise per-coordinate published altitude located — left null.",
+        "max_time": "Wikipedia city table: 13:21:14 CDT (UTC-5) = 18:21:14 UT. Informational; not graded."
+      },
+      "source": "NationalEclipse.com 2017 total eclipse city data, https://nationaleclipse.com/cities/lists/cities_total_2017.html ; Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_August_21,_2017 ; EclipseWise (Espenak), https://www.eclipsewise.com/solar/SEnews/TSE2017/TSE2017states/TSE2017stateIL.html"
     },
     {
       "id": "jul22_2009_shanghai",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2009-07-22",
       "observer": {"name": "Shanghai, China", "lat": 31.2304, "lon": 121.4737},
       "why": "The longest totality of the 21st century, and it falls on Jul 22 — the project's top-ranked date. Tests the long-duration end of the range.",
-      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
-      "source": null
+      "expected": {
+        "in_umbra": true,
+        "max_time_ut": "2009-07-22T01:39:17Z",
+        "sun_alt_deg": null,
+        "duration_s": 302
+      },
+      "_source_values": {
+        "duration": "Wikipedia 'Solar eclipse of July 22, 2009' city table (Espenak-based): Shanghai duration of totality 5:02 (302 s).",
+        "sun_alt_deg_coarse": "Nearby Hangzhou (~100 km S) reported ~55 deg; no exact Shanghai-coordinate published altitude located — left null.",
+        "max_time": "Wikipedia city table: 09:39:17 CST (UTC+8) = 01:39:17 UT. Informational; not graded."
+      },
+      "source": "Wikipedia, https://en.wikipedia.org/wiki/Solar_eclipse_of_July_22,_2009 ; NASA GSFC (Espenak) TSE2009 monograph, https://eclipse.gsfc.nasa.gov/SEmono/TSE2009/TSE2009.html"
     },
     {
       "id": "apr8_2024_burlington",
-      "populated": false,
+      "populated": true,
       "eclipse_date": "2024-04-08",
       "observer": {"name": "Burlington, Vermont, USA", "lat": 44.4759, "lon": -73.2121},
       "why": "Recent, extremely well documented, northern latitude. Tests the oblateness correction where it bites hardest.",
-      "expected": {"in_umbra": null, "max_time_ut": null, "sun_alt_deg": null, "duration_s": null},
-      "source": null
-    },
+      "expected": {
+        "in_umbra": true,
+        "max_time_ut": "2024-04-08T19:27:45Z",
+        "sun_alt_deg": 40.4,
+        "duration_s": 195
+      },
+      "_source_values": {
+        "coordinates_source": "NationalEclipse.com per-city page reports 44.47582 N, -73.21211 W — matches the anchor observer to 5 decimals.",
+        "duration": "NationalEclipse.com: 3 min 15 s (195 s).",
+        "sun_alt_deg": "NationalEclipse.com: +40.4 deg at maximum (0.1 deg precision, exact anchor coordinates).",
+        "max_time": "NationalEclipse.com: 3:27:45 PM EDT (UTC-4) = 19:27:45 UT. Informational; not graded."
+      },
+      "source": "NationalEclipse.com per-city local circumstances, https://nationaleclipse.com/cities/burlington_vermont.html"
+    }
+  ],
+
+  "deferred_anchors": [
     {
       "id": "ancient_delta_t_probe",
+      "_deferred_note": "DEFERRED by human decision on 2026-07-18: B5 is being passed on the 6 modern anchors; the ancient delta-T stress test is split out as its own follow-up task and is intentionally NOT graded in this B5 pass. It is held here (outside `anchors`) so gate_b.b5 does not block on an unpopulated placeholder. Do NOT populate with invented values — it needs a chosen well-studied ancient eclipse (candidates: 763 BCE Bur-Sagale Assyrian record, or 585 BCE Thales) and a historically sourced position-uncertainty check against the B2 delta-T band.",
       "populated": false,
       "eclipse_date": "TBD — pick a well-studied ancient eclipse with historical records",
       "observer": {"name": "TBD", "lat": null, "lon": null},
-      "why": "DELTA-T STRESS TEST. Candidates: the 763 BCE Bur-Sagale eclipse (Assyrian record), or Thales' eclipse (585 BCE). These are the events historians used to CONSTRAIN delta-T in the first place. The point is not to nail the position — it is to confirm the engine's error stays inside the documented uncertainty band from B2. Passing this with suspiciously tight agreement is itself a red flag: it means delta-T is being applied twice, or not at all.",
+      "why": "DELTA-T STRESS TEST. The point is not to nail the position — it is to confirm the engine's error stays inside the documented uncertainty band from B2. Suspiciously tight agreement is itself a red flag: it means delta-T is being applied twice, or not at all.",
       "expected": {"in_umbra": null, "position_uncertainty_km": null},
       "source": null
     }
