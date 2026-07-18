@@ -87,6 +87,14 @@ KINDS = (KIND_TOTAL, KIND_ANNULAR, KIND_HYBRID, KIND_ANY)
 # The Sun is "near the horizon" (a sunset/sunrise eclipse) within this altitude.
 DEFAULT_HORIZON_DEG = 5.0
 
+# Totality is only OBSERVABLE where the Sun is above the horizon. The shadow-axis
+# alignment can be satisfied for a point on the night hemisphere (the umbra's
+# ground path is on the sunlit side); such a point did not experience totality.
+# `is_total` therefore requires the Sun's centre above the astronomical horizon,
+# which also matches the physical path of totality, whose ends are the
+# sunrise/sunset terminator where the umbra lifts off the surface.
+MIN_OBSERVABLE_SUN_ALT = 0.0
+
 
 # ============================================================ exceptions
 class EclipseEngineError(Exception):
@@ -139,9 +147,11 @@ class LocalCircumstances:
     result is directly useful (dates + durations + Sun altitude) without a
     second call.
 
-    in_umbra:     inside the umbral (total) shadow at maximum.
-    is_total:     in_umbra for a total-type eclipse (semantic alias of in_umbra
-                  for kind='total'; distinguished from annular antumbra later).
+    in_umbra:     inside the umbral shadow cone at maximum (raw geometry; can be
+                  True on the night hemisphere, where it is not observable).
+    is_total:     OBSERVABLE totality — in_umbra for a total-type eclipse AND the
+                  Sun above the horizon (sun_alt_deg > MIN_OBSERVABLE_SUN_ALT).
+                  This is the field to use for "did this point see totality".
     max_time_ut:  UT of maximum eclipse at this point (ISO-8601).
     sun_alt_deg:  Sun geometric altitude at maximum (no refraction).
     sun_az_deg:   Sun azimuth at maximum, if computed (else None).
@@ -381,20 +391,52 @@ def _uncertainty_for(year: int) -> Uncertainty:
     )
 
 
-def _horizon_flags(lon: float, max_time_ut: str, sun_alt: float) -> Tuple[bool, bool]:
-    """Best-effort (at_sunset, at_sunrise): the Sun near the horizon at maximum,
-    with setting vs rising inferred from local solar time. Returns (False, False)
-    when the max time is not a parseable modern UT stamp (e.g. BCE offset form)."""
-    if sun_alt > DEFAULT_HORIZON_DEG:
-        return (False, False)
+def _local_solar_hour(lon: float, max_time_ut: str) -> Optional[float]:
+    """Local apparent solar hour [0,24) at maximum, or None if the UT stamp is not
+    a parseable modern form (e.g. the BCE offset notation)."""
     try:
         clock = max_time_ut.split("T", 1)[1]
         hh, mm = int(clock[0:2]), int(clock[3:5])
     except (IndexError, ValueError):
+        return None
+    return (hh + mm / 60.0 + lon / 15.0) % 24.0
+
+
+def _is_setting(lon: float, max_time_ut: str) -> bool:
+    """True if the Sun is in the setting (afternoon/evening) half of the local day."""
+    h = _local_solar_hour(lon, max_time_ut)
+    return h is not None and 12.0 <= h < 24.0
+
+
+def _horizon_flags(lon: float, max_time_ut: str, sun_alt: float) -> Tuple[bool, bool]:
+    """Best-effort (at_sunset, at_sunrise): the Sun near the horizon at maximum,
+    with setting vs rising inferred from local solar time."""
+    if sun_alt > DEFAULT_HORIZON_DEG:
         return (False, False)
-    local_solar = (hh + mm / 60.0 + lon / 15.0) % 24.0
-    setting = 12.0 <= local_solar < 24.0
+    h = _local_solar_hour(lon, max_time_ut)
+    if h is None:
+        return (False, False)
+    setting = 12.0 <= h < 24.0
     return (setting, not setting)
+
+
+def _year_fraction(ymd: Tuple[int, int, int]) -> float:
+    """A decimal year for gap arithmetic (day-of-year approximated by 30.44/mo)."""
+    y, m, d = ymd
+    return y + ((m - 1) * 30.44 + (d - 1)) / 365.25
+
+
+def _ordinal(ymd: Tuple[int, int, int]) -> int:
+    """A day count for date differencing; exact for CE dates, proleptic-approx
+    for BCE (which are only ever compared to other far-past dates)."""
+    import datetime
+    y, m, d = ymd
+    if y >= 1:
+        try:
+            return datetime.date(y, m, d).toordinal()
+        except ValueError:
+            pass
+    return int(y * 365.2425 + (m - 1) * 30.44 + d)
 
 
 def _saros(row: dict) -> Optional[int]:
@@ -407,7 +449,11 @@ def _saros(row: dict) -> Optional[int]:
 
 def _to_local(lat: float, lon: float, eclipse_id: str, row: dict, r: dict) -> LocalCircumstances:
     ymd = _bess._parse_iso_date(eclipse_id)
-    is_total = bool(r["in_umbra"] and r["eclipse_type"].strip()[:1] == "T")
+    is_total = bool(
+        r["in_umbra"]
+        and r["eclipse_type"].strip()[:1] == "T"
+        and r["sun_alt_deg"] > MIN_OBSERVABLE_SUN_ALT
+    )
     at_set, at_rise = _horizon_flags(lon, r["max_time"], r["sun_alt_deg"])
     return LocalCircumstances(
         lat=lat, lon=lon, eclipse_id=eclipse_id,
@@ -528,7 +574,29 @@ def previous_totality(
 def totality_drought(lat: float, lon: float, *, on: DateLike) -> Drought:
     """The totality gap the date `on` falls inside at (lat, lon): the bracketing
     previous/next totalities and the length of the drought around that date."""
-    raise NotImplementedError
+    on_ymd = _ymd(on, upper=False)
+    all_tot = eclipses_over(lat, lon)
+    prev = nxt = None
+    for c in all_tot:
+        k = _bess._parse_iso_date(c.eclipse_id)
+        if k < on_ymd:
+            prev = c
+        elif k > on_ymd:
+            nxt = c
+            break
+        else:
+            prev = c  # a totality falling exactly on `on`
+    on_yr = _year_fraction(on_ymd)
+    ysp = (round(on_yr - _year_fraction(_bess._parse_iso_date(prev.eclipse_id)), 2)
+           if prev else None)
+    yun = (round(_year_fraction(_bess._parse_iso_date(nxt.eclipse_id)) - on_yr, 2)
+           if nxt else None)
+    gap = round(ysp + yun, 2) if (ysp is not None and yun is not None) else None
+    return Drought(
+        lat=float(lat), lon=float(lon), on_date=str(on),
+        ever=bool(all_tot), previous=prev, next=nxt,
+        years_since_previous=ysp, years_until_next=yun, gap_years=gap,
+    )
 
 
 def sunset_totalities(
@@ -544,7 +612,10 @@ def sunset_totalities(
     Convenience over `eclipses_over(..., max_sun_alt=max_sun_alt)` filtered to
     setting-Sun events — the low-sun 'sunset atlas' query at a single point.
     """
-    raise NotImplementedError
+    return [
+        c for c in eclipses_over(lat, lon, start=start, end=end, max_sun_alt=max_sun_alt)
+        if _is_setting(lon, c.max_time_ut)
+    ]
 
 
 def closest_approach(lat: float, lon: float, eclipse_id: str) -> Approach:
@@ -595,7 +666,27 @@ def birthplace_history(
     """Totality history over a birthplace: whether totality ever crossed it, the
     totality nearest the birth date, the full list, and the next one after `as_of`
     (the 'next totality home'). Purely a composition of the primitives above."""
-    raise NotImplementedError
+    all_tot = eclipses_over(lat, lon)
+    b_ord = _ordinal(_ymd(birth_date, upper=False))
+    nearest = None
+    days = None
+    for c in all_tot:
+        dd = _ordinal(_bess._parse_iso_date(c.eclipse_id)) - b_ord
+        if days is None or abs(dd) < abs(days):
+            nearest, days = c, dd
+    ao = _ymd(as_of, upper=True) if as_of is not None else _ymd(birth_date, upper=True)
+    nxt = None
+    for c in all_tot:
+        if _bess._parse_iso_date(c.eclipse_id) > ao:
+            nxt = c
+            break
+    return BirthplaceReport(
+        lat=float(lat), lon=float(lon), birth_date=str(birth_date),
+        ever_totality=bool(all_tot), all_totalities=all_tot,
+        nearest_to_birth=nearest,
+        days_from_birth=(float(days) if days is not None else None),
+        next_after_asof=nxt,
+    )
 
 
 # ============================================================ metadata
