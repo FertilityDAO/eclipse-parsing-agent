@@ -160,6 +160,64 @@ def test_deterministic_and_serialisable():
     assert d["uncertainty"]["era"] == "modern"      # nested dataclass serialises
 
 
+def test_eclipse_info():
+    i = E.eclipse("2026-08-12")
+    assert i.eclipse_type == "T" and i.saros == 126
+    assert abs(i.gamma - 0.89774) < 1e-4
+    assert abs(i.magnitude - 1.03863) < 1e-4
+    assert abs(i.greatest_eclipse.lat - 65.223) < 0.01
+    assert abs(i.max_duration_s - 138.2) < 0.5
+    assert abs(i.path_width_km - 293.9) < 0.5
+    assert i.greatest_time_ut.startswith("2026-08-12T17:4")   # ~17:45:50 UT
+    assert i.calendar == "gregorian"
+
+
+def test_path_geometry():
+    p = E.path("2026-08-12")
+    assert len(p.centerline) > 10 and len(p.polygon) > 10
+    assert p.polygon[0].lat == p.polygon[-1].lat and p.polygon[0].lon == p.polygon[-1].lon
+    assert len(p.bbox) == 4 and p.crosses_antimeridian is False
+    assert all(isinstance(g, E.GeoPoint) for g in p.centerline)
+
+
+def test_path_requires_total():
+    try:
+        E.path("2023-10-14")   # annular — no umbral ground path
+        raise AssertionError("expected InvalidQuery for annular path()")
+    except E.InvalidQuery:
+        pass
+
+
+def test_eclipses_window():
+    es = E.eclipses(start=2020, end=2030)
+    ids = [e.eclipse_id for e in es]
+    assert "2026-08-12" in ids and "2024-04-08" in ids
+    assert ids == sorted(ids, key=lambda s: E._bess._parse_iso_date(s))
+    assert all(e.eclipse_type.startswith("T") for e in es)
+
+
+def test_cross_check_agrees_and_range():
+    a = E.circumstances(*CASTELLON, "2026-08-12")
+    b = E.cross_check(*CASTELLON, "2026-08-12")
+    assert b.is_total is True
+    assert abs(a.sun_alt_deg - b.sun_alt_deg) < 0.05   # two independent engines agree
+    try:
+        E.cross_check(*CASTELLON, "-1220-08-07")        # outside DE440s span
+        raise AssertionError("expected InvalidQuery outside ephemeris range")
+    except E.InvalidQuery:
+        pass
+
+
+def test_closest_approach():
+    assert E.closest_approach(*CASTELLON, "2026-08-12").distance_km == 0.0   # inside
+    a = E.closest_approach(*LONDON, "2090-09-23")
+    assert a.distance_km > 30.0                                              # real miss
+    # distance must be consistent with the reported nearest point
+    chk = E._hav_km(a.lat, a.lon, a.nearest_point.lat, a.nearest_point.lon)
+    assert abs(chk - a.distance_km) < 0.5
+    assert E.closest_approach(*MADRID, "2026-08-12").distance_km > 0.0       # outside
+
+
 def _run():
     tests = [(n, f) for n, f in sorted(globals().items())
              if n.startswith("test_") and callable(f)]
