@@ -53,8 +53,23 @@ STABILITY POLICY
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
+import json
+import sys
+from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import List, Optional, Tuple, Union
+
+# The public surface is backed by the internal modules. The shim lets `import
+# besselian`/`path_engine` resolve however engine.py is loaded (script, package,
+# or by file path from a test harness).
+_SRC = Path(__file__).resolve().parent
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+import besselian as _bess          # noqa: E402  (B3 core solver)
+import path_engine as _index       # noqa: E402  (B7 spatial index)
+
+_ROOT = _SRC.parent
+_DELTA_T_PATH = _ROOT / "outputs" / "delta_t_decision.json"
 
 API_VERSION = "1.0.0-draft"
 
@@ -289,13 +304,138 @@ class EngineInfo:
         return asdict(self)
 
 
+# ============================================================ internal helpers
+_GREGORIAN_START = (1582, 10, 15)  # NASA canon switches Julian -> Gregorian here
+_DT_CACHE: dict = {}
+
+
+def _calendar(ymd: Tuple[int, int, int]) -> str:
+    return "gregorian" if ymd >= _GREGORIAN_START else "julian"
+
+
+def _ymd(datelike: DateLike, *, upper: bool) -> Tuple[int, int, int]:
+    """Normalise a DateLike to a (year, month, day) tuple. Partial values fill to
+    the year/month end when `upper` else the start, so int-year and 'YYYY' bounds
+    behave sensibly at window edges."""
+    if isinstance(datelike, int):
+        return (datelike, 12, 31) if upper else (datelike, 1, 1)
+    s = str(datelike).strip()
+    neg = s.startswith("-")
+    if neg:
+        s = s[1:]
+    parts = s.split("-")
+    year = -int(parts[0]) if neg else int(parts[0])
+    if len(parts) >= 3:
+        return (year, int(parts[1]), int(parts[2]))
+    if len(parts) == 2:
+        return (year, int(parts[1]), 31 if upper else 1)
+    return (year, 12 if upper else 1, 31 if upper else 1)
+
+
+def _delta_t() -> dict:
+    if "d" not in _DT_CACHE:
+        _DT_CACHE["d"] = json.loads(_DELTA_T_PATH.read_text(encoding="utf-8"))
+    return _DT_CACHE["d"]
+
+
+def _uncertainty_anchors() -> List[Tuple[int, float]]:
+    if "anchors" not in _DT_CACHE:
+        band = _delta_t().get("uncertainty_km_by_era", {})
+        pts = []
+        for key, km in band.items():
+            tok = key.split()[0]
+            neg = tok.startswith("-")
+            lead = (tok[1:] if neg else tok).split("-")[0]
+            year = -int(lead) if neg else int(lead)
+            pts.append((year, float(km)))
+        _DT_CACHE["anchors"] = sorted(pts)
+    return _DT_CACHE["anchors"]
+
+
+def _uncertainty_for(year: int) -> Uncertainty:
+    """The ~1-sigma position uncertainty for an eclipse year, interpolated from
+    the frozen B2 Delta-T band (outputs/delta_t_decision.json)."""
+    pts = _uncertainty_anchors()
+    if year <= pts[0][0]:
+        km = pts[0][1]
+    elif year >= pts[-1][0]:
+        km = pts[-1][1]
+    else:
+        km = pts[-1][1]
+        for (y0, k0), (y1, k1) in zip(pts, pts[1:]):
+            if y0 <= year <= y1:
+                km = k0 + (k1 - k0) * (year - y0) / (y1 - y0)
+                break
+    if year < 1600:
+        era = "pre-telescopic"
+    elif year < 1900:
+        era = "telescopic"
+    elif year <= 2100:
+        era = "modern"
+    else:
+        era = "far-future extrapolation"
+    return Uncertainty(
+        era=era,
+        position_km=round(km, 1),
+        note="~1-sigma east-west path shift from the frozen B2 Delta-T band",
+    )
+
+
+def _horizon_flags(lon: float, max_time_ut: str, sun_alt: float) -> Tuple[bool, bool]:
+    """Best-effort (at_sunset, at_sunrise): the Sun near the horizon at maximum,
+    with setting vs rising inferred from local solar time. Returns (False, False)
+    when the max time is not a parseable modern UT stamp (e.g. BCE offset form)."""
+    if sun_alt > DEFAULT_HORIZON_DEG:
+        return (False, False)
+    try:
+        clock = max_time_ut.split("T", 1)[1]
+        hh, mm = int(clock[0:2]), int(clock[3:5])
+    except (IndexError, ValueError):
+        return (False, False)
+    local_solar = (hh + mm / 60.0 + lon / 15.0) % 24.0
+    setting = 12.0 <= local_solar < 24.0
+    return (setting, not setting)
+
+
+def _saros(row: dict) -> Optional[int]:
+    raw = (row.get("saros") or "").strip()
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def _to_local(lat: float, lon: float, eclipse_id: str, row: dict, r: dict) -> LocalCircumstances:
+    ymd = _bess._parse_iso_date(eclipse_id)
+    is_total = bool(r["in_umbra"] and r["eclipse_type"].strip()[:1] == "T")
+    at_set, at_rise = _horizon_flags(lon, r["max_time"], r["sun_alt_deg"])
+    return LocalCircumstances(
+        lat=lat, lon=lon, eclipse_id=eclipse_id,
+        eclipse_type=r["eclipse_type"].strip(), saros=_saros(row),
+        in_umbra=bool(r["in_umbra"]), is_total=is_total,
+        max_time_ut=r["max_time"], sun_alt_deg=r["sun_alt_deg"],
+        duration_s=r["duration_s"], magnitude=r["magnitude"],
+        calendar=_calendar(ymd), uncertainty=_uncertainty_for(ymd[0]),
+        at_sunset=at_set, at_sunrise=at_rise,
+    )
+
+
 # ============================================================ local circumstances
 def circumstances(lat: float, lon: float, eclipse_id: str) -> LocalCircumstances:
     """Local circumstances of one eclipse at one point (via the B3 solver).
 
     Raises UnknownEclipse if `eclipse_id` is not in the catalog.
     """
-    raise NotImplementedError
+    lat, lon = float(lat), float(lon)
+    try:
+        ymd = _bess._parse_iso_date(eclipse_id)
+    except (ValueError, IndexError):
+        raise InvalidQuery(f"bad eclipse id: {eclipse_id!r}")
+    row = _bess._CATALOG.get(ymd)
+    if row is None:
+        raise UnknownEclipse(str(eclipse_id))
+    r = _bess.circumstances(lat, lon, eclipse_id)
+    return _to_local(lat, lon, eclipse_id, row, r)
 
 
 def cross_check(lat: float, lon: float, eclipse_id: str) -> LocalCircumstances:
@@ -326,7 +466,29 @@ def eclipses_over(
 
     Returns [] when the point saw no matching eclipse — never a nearby place.
     """
-    raise NotImplementedError
+    if kind != KIND_TOTAL:
+        if kind in KINDS:
+            raise NotImplementedError(f"kind={kind!r} not enabled in v1 (total-only)")
+        raise InvalidQuery(f"unknown kind: {kind!r}")
+    lat, lon = float(lat), float(lon)
+    lo = _ymd(start, upper=False) if start is not None else None
+    hi = _ymd(end, upper=True) if end is not None else None
+
+    out: List[LocalCircumstances] = []
+    for hit in _index.paths_over(lat, lon):
+        key = _bess._parse_iso_date(hit["eclipse_id"])
+        if lo is not None and key < lo:
+            continue
+        if hi is not None and key > hi:
+            continue
+        lc = circumstances(lat, lon, hit["eclipse_id"])
+        if not lc.is_total:
+            continue
+        if max_sun_alt is not None and lc.sun_alt_deg > max_sun_alt:
+            continue
+        out.append(lc)
+    out.sort(key=lambda c: _bess._parse_iso_date(c.eclipse_id))
+    return out
 
 
 def next_totality(
@@ -338,7 +500,11 @@ def next_totality(
 ) -> Optional[LocalCircumstances]:
     """The first totality over (lat, lon) strictly after `after` (None => catalog
     start). Returns None if there is none within the catalog."""
-    raise NotImplementedError
+    thr = _ymd(after, upper=True) if after is not None else None
+    for lc in eclipses_over(lat, lon, max_sun_alt=max_sun_alt):
+        if thr is None or _bess._parse_iso_date(lc.eclipse_id) > thr:
+            return lc
+    return None
 
 
 def previous_totality(
@@ -349,7 +515,14 @@ def previous_totality(
 ) -> Optional[LocalCircumstances]:
     """The last totality over (lat, lon) strictly before `before` (None => catalog
     end). Returns None if there is none within the catalog."""
-    raise NotImplementedError
+    thr = _ymd(before, upper=False) if before is not None else None
+    prev: Optional[LocalCircumstances] = None
+    for lc in eclipses_over(lat, lon):
+        if thr is None or _bess._parse_iso_date(lc.eclipse_id) < thr:
+            prev = lc
+        else:
+            break
+    return prev
 
 
 def totality_drought(lat: float, lon: float, *, on: DateLike) -> Drought:
@@ -429,7 +602,20 @@ def birthplace_history(
 def info() -> EngineInfo:
     """Provenance and capabilities of the loaded engine (catalog range, Delta-T
     model, index sizes, API version)."""
-    raise NotImplementedError
+    years = [k[0] for k in _bess._CATALOG]
+    total = sum(1 for r in _bess._CATALOG.values()
+                if r["eclipse_type"].strip()[:1] == "T")
+    dt = _delta_t()
+    return EngineInfo(
+        api_version=API_VERSION,
+        catalog_source="NASA Five Millennium Canon of Solar Eclipses (-1999 to +3000)",
+        catalog_year_range=(min(years), max(years)),
+        catalog_eclipse_count=len(_bess._CATALOG),
+        total_eclipse_count=total,
+        path_index_count=_index._load()["meta"]["count"],
+        delta_t_model=(dt.get("model") or "")[:140],
+        delta_t_frozen=bool(dt.get("frozen", False)),
+    )
 
 
 __all__ = [
