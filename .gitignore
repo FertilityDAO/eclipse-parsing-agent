@@ -16,6 +16,9 @@ Thumbs.db
 .claude/hooks/*_debug.json
 .claude/hooks/*_result.json
 
+# Claude local settings (machine-specific permissions; not shared)
+.claude/settings.local.json
+
 # JPL ephemerides (large binaries; auto-fetched by Skyfield on first use)
 ephemeris/
 *.bsp
