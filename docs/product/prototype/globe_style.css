@@ -1,0 +1,44 @@
+/* ============================================================ S2g · LIVING GLOBE
+   Always dark, in both themes — same rule as the reckoning: the theatre
+   does not care what time it is outside. */
+#s2g{background:#06060B; color:#D8D6D0; position:relative; overflow:hidden; padding:0}
+#s2g.screen--center.is-on{display:block}
+#globeCanvas{position:absolute; inset:0; width:100%; height:100%; z-index:0}
+
+.gb__hud{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  display:flex; flex-direction:column; justify-content:space-between;
+  padding:clamp(1.1rem,4vw,2.6rem);
+}
+.gb__top{display:flex; justify-content:space-between; align-items:flex-start; gap:1rem}
+.gb__year{
+  font-family:var(--mono); font-variant-numeric:tabular-nums;
+  font-size:clamp(1.6rem,6vw,2.9rem); letter-spacing:.02em; color:#D8D6D0;
+  line-height:1; margin:0; opacity:0; transition:opacity .4s linear;
+}
+.gb__year small{display:block; font-size:.3em; letter-spacing:.24em; color:#6E6E86;
+  margin-top:.7em; text-transform:uppercase}
+.gb__skip{
+  pointer-events:auto; background:none; border:1px solid #24243288; color:#6E6E86;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; text-transform:uppercase;
+  padding:.55rem .9rem; cursor:pointer; flex:none;
+}
+.gb__skip:hover{color:var(--sodium); border-color:var(--sodium)}
+
+.gb__bottom{display:flex; flex-direction:column; gap:.7rem}
+.gb__caption{
+  font-family:var(--mono); font-size:clamp(.78rem,2.4vw,.95rem); letter-spacing:.055em;
+  color:#B9B7C6; margin:0; min-height:1.5em; max-width:34rem; line-height:1.6;
+  opacity:0; transition:opacity .35s linear;
+}
+.gb__caption.is-in{opacity:1}
+.gb__count{
+  font-family:var(--mono); font-variant-numeric:tabular-nums;
+  font-size:clamp(1.35rem,5vw,2.1rem); color:var(--sodium); margin:0; letter-spacing:-.01em;
+  line-height:1.1; opacity:0; transition:opacity .4s linear;
+}
+.gb__count.is-in{opacity:1}
+.gb__note{
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; color:#4E4E62;
+  margin:0; line-height:1.7;
+}
