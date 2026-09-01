@@ -10,7 +10,7 @@ place without touching the execution path.
           -> Claim Firewall -> Payload
 
 Status:
-    gazetteer   STUB   (service/gazetteer.py — next to implement)
+    gazetteer   LIVE   (service/gazetteer.py)
     engine      STUB   (reads src/engine.py; frozen, already green)
     ladder      STUB   (transcribe build_fixtures.py lines 119-170 verbatim)
     firewall    LIVE   (firewall/firewall.py — gate passes 15/15)
@@ -55,7 +55,8 @@ class ResolvedPlace:
 
 def resolve_place(query: str, limit: int = 8) -> List[ResolvedPlace]:
     """Free text -> ranked candidate points, offline and deterministic."""
-    raise StageNotImplemented("gazetteer", "service/gazetteer.py")
+    from . import gazetteer  # deferred: gazetteer imports ResolvedPlace from here
+    return gazetteer.resolve_place(query, limit=limit)
 
 
 # ============================================================ 2. engine compute

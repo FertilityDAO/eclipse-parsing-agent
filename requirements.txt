@@ -5,3 +5,10 @@
 # read JPL DE ephemerides. On first use it fetches ephemeris/de440s.bsp (~32 MB,
 # git-ignored); thereafter it runs offline.
 skyfield>=1.49
+
+# The Fingerprint Service gazetteer (service/gazetteer.py) resolves birthplaces
+# against reverse_geocoder's bundled GeoNames extract, which carries alpha-2
+# country codes only. pycountry supplies the ISO 3166-1 names, so no country
+# table is embedded in this repository.
+reverse-geocoder>=1.5.1
+pycountry>=24.6.1
