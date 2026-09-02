@@ -1,5 +1,28 @@
 # Handoff — 2026-08-02
 
+> ## SUPERSEDED — read `2026-09-01-fingerprint-service.md` instead
+>
+> This document is kept for history. It is **stale in six ways**, and where the
+> two disagree the 2026-09-01 handoff is correct:
+>
+> 1. **Git state.** "Nothing is committed — all work is untracked" is no longer
+>    true. Everything described here is committed.
+> 2. **The gazetteer is DONE**, not "not written". `service/gazetteer.py`,
+>    commit `766446a`, 16/16 tests.
+> 3. **Engine facts are DONE**, not a stub. `service/engine_facts.py`, commit
+>    `57b82c3`, 15/15 tests.
+> 4. **`BORN_UNDER_SHADOW` is settled.** This document says to confirm whether
+>    the omission was intended. Clay ruled on 2026-09-01: it is an **oversight**
+>    and it is **rung 1**. Do not re-open it.
+> 5. **The scan cost estimate is wrong.** "~54 candidates × ~263 ms ≈ 14 s"
+>    counted a one-time cache load as a per-call cost. The naive scan is ~0.5 s.
+> 6. **The BCE defect is misdiagnosed here.** It is not about being unbounded —
+>    `src/besselian.py:241` clamps a BCE year to 1 CE and then asks for 29
+>    February in a non-leap year. Any window reaching BCE trips it.
+>
+> The blocker described below was resolved on 2026-09-01 by adding `pycountry`
+> rather than authoring a country-name table.
+
 Session goal: replace the five hardcoded prototype fixtures with a request-time
 Fingerprint Service. Stopped mid-way through the gazetteer stage, blocked by a
 tooling issue rather than a design or code problem.
