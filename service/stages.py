@@ -11,7 +11,7 @@ place without touching the execution path.
 
 Status:
     gazetteer   LIVE   (service/gazetteer.py)
-    engine      STUB   (reads src/engine.py; frozen, already green)
+    engine      LIVE   (service/engine_facts.py — reads the frozen src/engine.py)
     ladder      STUB   (transcribe build_fixtures.py lines 119-170 verbatim)
     firewall    LIVE   (firewall/firewall.py — gate passes 15/15)
     payload     STUB   (assemble the build_fixtures.py shape)
@@ -77,6 +77,14 @@ class EngineFacts:
     as_of: str
     life_end: str
 
+    # Rung 1, BORN_UNDER_SHADOW: the eclipse that fell on the birth DATE itself,
+    # seen from the birthplace, or None if no catalog eclipse fell that day.
+    # Distinct from closest_past, whose window starts at the birth date and so
+    # would report the same event as an ordinary past hit at age 0. The ladder
+    # must read `.is_total` — an eclipse on the birth date is not necessarily a
+    # totality over the birthplace.
+    birth_day_circumstances: Optional[Any] = None   # engine.LocalCircumstances
+
     closest_past: Optional[Any] = None      # engine.Approach | None
     closest_future: Optional[Any] = None    # engine.Approach | None
     past_circumstances: Optional[Any] = None    # engine.LocalCircumstances, hits only
@@ -101,7 +109,8 @@ def compute(lat: float, lon: float, birth_date: str, as_of: str,
     lower-bound prefilter over EclipsePath.bbox and remain an exact argmin —
     identical results to build_fixtures.scan(), chronological ties preserved.
     """
-    raise StageNotImplemented("engine", "service/engine_facts.py")
+    from . import engine_facts  # deferred: engine_facts imports EngineFacts from here
+    return engine_facts.compute(lat, lon, birth_date, as_of, lifespan_years)
 
 
 # ============================================================ 3. editorial ladder
